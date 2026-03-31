@@ -57,11 +57,133 @@
       0%,100%{ box-shadow:0 0 60px rgba(124,90,240,0.15); }
       50%    { box-shadow:0 0 100px rgba(124,90,240,0.30); }
     }
-    .lock-icon { font-size:4rem; display:block; margin-bottom:.6rem;
-      animation:bounce 2s ease-in-out infinite; }
-    @keyframes bounce {
-      0%,100%{ transform:translateY(0); }
-      50%    { transform:translateY(-9px); }
+    /* ── GIFT BOX (lock screen) ── */
+    .gift-wrap {
+      position:relative; width:130px; height:148px;
+      margin:0 auto 1rem;
+      animation:giftFloat 3s ease-in-out infinite;
+    }
+    /* Body */
+    .g-body {
+      position:absolute; bottom:0; left:14px; right:14px; height:86px;
+      background:linear-gradient(160deg,#7240c8 0%,#4a1a90 55%,#3a1275 100%);
+      border-radius:6px 6px 14px 14px;
+      box-shadow:0 10px 32px rgba(80,20,180,.55),inset 0 1px 0 rgba(255,255,255,.13);
+      overflow:hidden;
+    }
+    /* Ribbon vertical on body */
+    .g-rv {
+      position:absolute; left:50%; top:0; bottom:0; width:22px;
+      transform:translateX(-50%);
+      background:linear-gradient(180deg,#ffd700,#ff9900);
+      box-shadow:inset 0 0 8px rgba(0,0,0,.2);
+    }
+    /* Ribbon horizontal on body */
+    .g-body::after {
+      content:''; position:absolute; left:0; right:0;
+      top:50%; height:22px; transform:translateY(-50%);
+      background:linear-gradient(180deg,#ffd700,#ff9900);
+      box-shadow:inset 0 0 8px rgba(0,0,0,.2);
+    }
+    /* Shine */
+    .g-shine {
+      position:absolute; top:10px; left:12px;
+      width:18px; height:48px;
+      background:linear-gradient(180deg,rgba(255,255,255,.2),transparent);
+      border-radius:50%; transform:rotate(-15deg); pointer-events:none;
+    }
+    /* Lid wrapper */
+    .g-lid-wrap {
+      position:absolute; bottom:82px; left:0; right:0;
+      display:flex; flex-direction:column; align-items:center;
+      transform-origin:center bottom;
+    }
+    /* Lid */
+    .g-lid {
+      width:136px; height:30px;
+      background:linear-gradient(160deg,#9060e0,#6030b8);
+      border-radius:8px 8px 3px 3px;
+      box-shadow:0 -4px 18px rgba(110,50,210,.45),inset 0 1px 0 rgba(255,255,255,.18);
+      position:relative; overflow:hidden;
+    }
+    .g-lid::before {
+      content:''; position:absolute;
+      left:50%; top:0; bottom:0; width:22px;
+      transform:translateX(-50%);
+      background:linear-gradient(180deg,#ffd700,#ff9900);
+    }
+    /* Bow */
+    .g-bow { position:relative; width:86px; height:48px; margin-bottom:-2px; }
+    .g-bl,.g-br {
+      position:absolute; width:36px; height:30px;
+      background:linear-gradient(135deg,#ffe040,#ffaa00);
+      border-radius:50%; top:10px;
+      box-shadow:0 2px 10px rgba(180,90,0,.35);
+    }
+    .g-bl { left:4px; transform:rotate(-34deg); transform-origin:right center; }
+    .g-br { right:4px; transform:rotate(34deg);  transform-origin:left center; }
+    .g-bk {
+      position:absolute; width:20px; height:20px;
+      background:radial-gradient(circle at 38% 38%,#ffe860,#cc8000);
+      border-radius:50%; top:50%; left:50%;
+      transform:translate(-50%,-50%); z-index:2;
+      box-shadow:0 2px 8px rgba(0,0,0,.35);
+    }
+    /* Sparkles container */
+    #gift-sparkles {
+      position:absolute; top:40%; left:50%;
+      width:0; height:0; pointer-events:none; z-index:20;
+    }
+    .g-spark {
+      position:absolute; font-size:1.3rem;
+      animation:sparkFly .9s ease-out forwards;
+    }
+    @keyframes sparkFly {
+      0%   { transform:translate(0,0) scale(1.2); opacity:1; }
+      100% { transform:translate(var(--tx),var(--ty)) scale(0); opacity:0; }
+    }
+    /* ── ANIMATIONS ── */
+    @keyframes giftFloat {
+      0%,100% { transform:translateY(0)   rotate(0deg);   }
+      33%     { transform:translateY(-8px) rotate(-1.5deg); }
+      66%     { transform:translateY(-4px) rotate(1deg);    }
+    }
+    @keyframes giftShake {
+      0%,100% { transform:translateX(0) rotate(0deg);    }
+      12%     { transform:translateX(-10px) rotate(-6deg); }
+      24%     { transform:translateX(10px)  rotate(6deg);  }
+      36%     { transform:translateX(-8px)  rotate(-4deg); }
+      48%     { transform:translateX(8px)   rotate(4deg);  }
+      60%     { transform:translateX(-5px)  rotate(-3deg); }
+      72%     { transform:translateX(5px)   rotate(3deg);  }
+      86%     { transform:translateX(-2px)  rotate(-1deg); }
+    }
+    .gift-wrap.shaking { animation:giftShake .55s ease-in-out; }
+    @keyframes lidFly {
+      0%   { transform:translateY(0)    rotate(0deg);   opacity:1; }
+      30%  { transform:translateY(-22px) rotate(-8deg); opacity:1; }
+      100% { transform:translateY(-170px) rotate(-60deg); opacity:0; }
+    }
+    #gift-lid.flying { animation:lidFly .75s cubic-bezier(.2,.8,.3,1) forwards; }
+    @keyframes bodyGlow {
+      0%   { box-shadow:0 10px 32px rgba(80,20,180,.55); }
+      50%  { box-shadow:0 0 55px rgba(255,215,0,.85),0 0 90px rgba(255,215,0,.25); }
+      100% { box-shadow:0 10px 32px rgba(80,20,180,.55); }
+    }
+    .g-body.glowing { animation:bodyGlow .65s ease-in-out; }
+    /* Light ray burst from open box */
+    @keyframes rayBurst {
+      0%   { opacity:0; transform:scaleY(0); }
+      30%  { opacity:.7; }
+      100% { opacity:0; transform:scaleY(1) translateY(-60px); }
+    }
+    .g-ray {
+      position:absolute; bottom:86px; left:50%;
+      width:3px; height:60px;
+      background:linear-gradient(180deg,rgba(255,215,0,.9),transparent);
+      transform-origin:bottom center;
+      animation:rayBurst .6s ease-out forwards;
+      pointer-events:none;
     }
     .lock-box h2 { font-size:1.7rem; margin-bottom:.5rem; }
     .lock-givers { color:var(--gold); font-weight:700; font-size:1rem; margin-bottom:1.2rem; }
@@ -467,7 +589,22 @@
 <!-- LOCK SCREEN -->
 <div id="lock-screen">
   <div class="lock-box">
-    <span class="lock-icon">🎂</span>
+    <!-- Animated gift box -->
+    <div class="gift-wrap" id="gift-anim-wrap">
+      <div id="gift-sparkles"></div>
+      <div class="g-lid-wrap" id="gift-lid">
+        <div class="g-bow">
+          <div class="g-bl"></div>
+          <div class="g-br"></div>
+          <div class="g-bk"></div>
+        </div>
+        <div class="g-lid"></div>
+      </div>
+      <div class="g-body">
+        <div class="g-rv"></div>
+        <div class="g-shine"></div>
+      </div>
+    </div>
     <h2>En særlig gave til dig</h2>
     <div class="lock-givers">💜 Fra Fie og Simon 💜</div>
     <p>Du har modtaget en personlig fødselsdagsgave! Indtast kodeordet for at åbne den.</p>
@@ -754,20 +891,92 @@
 const PASSWORD = "tillykke";
 function unlock() {
   if (document.getElementById('pw-input').value.toLowerCase() === PASSWORD) {
-    document.getElementById('lock-screen').style.display = 'none';
-    document.getElementById('main').style.display = 'block';
-    document.getElementById('tab-bar').style.display = 'block';
-    document.getElementById('music-btn').style.display = 'flex';
-    // hamburger is CSS-only (display:none on desktop, flex on mobile via media query)
-    launchConfetti();
-    buildPage();
-    startParticles();
-    startMusic();
-    sfxUnlock();
+    document.querySelector('.lock-box button').disabled = true;
+    playGiftAnimation(() => {
+      document.getElementById('lock-screen').style.display = 'none';
+      document.getElementById('main').style.display = 'block';
+      document.getElementById('tab-bar').style.display = 'block';
+      document.getElementById('music-btn').style.display = 'flex';
+      launchConfetti();
+      buildPage();
+      startParticles();
+      startMusic();
+      sfxUnlock();
+    });
   } else {
+    // Shake the gift on wrong password
+    const wrap = document.getElementById('gift-anim-wrap');
+    wrap.style.animation = 'none';
+    void wrap.offsetWidth;
+    wrap.style.animation = '';
+    wrap.classList.remove('shaking');
+    void wrap.offsetWidth;
+    wrap.classList.add('shaking');
+    setTimeout(() => wrap.classList.remove('shaking'), 600);
     document.getElementById('pw-error').textContent = 'Forkert kodeord — prøv igen! 🙈';
     document.getElementById('pw-input').value = '';
     document.getElementById('pw-input').focus();
+  }
+}
+
+// ── GIFT OPEN ANIMATION ──
+function playGiftAnimation(callback) {
+  const wrap = document.getElementById('gift-anim-wrap');
+  const lid  = document.getElementById('gift-lid');
+  const body = wrap.querySelector('.g-body');
+  const ls   = document.getElementById('lock-screen');
+
+  // Stop idle float, start shake
+  wrap.style.animation = 'none';
+  void wrap.offsetWidth;
+  wrap.classList.add('shaking');
+
+  // After shake → lid flies + sparkles + rays
+  setTimeout(() => {
+    wrap.classList.remove('shaking');
+    lid.classList.add('flying');
+    spawnGiftRays(wrap);
+    setTimeout(() => spawnGiftSparkles(), 60);
+    setTimeout(() => body.classList.add('glowing'), 180);
+
+    // Fade out lock screen
+    setTimeout(() => {
+      ls.style.transition = 'opacity .55s ease';
+      ls.style.opacity = '0';
+      setTimeout(callback, 580);
+    }, 520);
+  }, 560);
+}
+
+function spawnGiftRays(wrap) {
+  [0,45,90,135,180,225,270,315].forEach((deg, i) => {
+    setTimeout(() => {
+      const ray = document.createElement('div');
+      ray.className = 'g-ray';
+      ray.style.transform = `translateX(-50%) rotate(${deg}deg)`;
+      wrap.appendChild(ray);
+      setTimeout(() => ray.remove(), 700);
+    }, i * 28);
+  });
+}
+
+function spawnGiftSparkles() {
+  const c = document.getElementById('gift-sparkles');
+  const sp = ['✨','⭐','💜','🎊','🎉','💫','🌟','🎈','🎀','💝'];
+  for (let i = 0; i < 14; i++) {
+    setTimeout(() => {
+      const el = document.createElement('span');
+      el.className = 'g-spark';
+      el.textContent = sp[Math.floor(Math.random() * sp.length)];
+      const angle = (i / 14) * Math.PI * 2 + Math.random() * .4;
+      const dist  = 55 + Math.random() * 70;
+      el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      el.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+      el.style.marginLeft = '-12px';
+      el.style.marginTop  = '-12px';
+      c.appendChild(el);
+      setTimeout(() => el.remove(), 1000);
+    }, i * 35);
   }
 }
 
