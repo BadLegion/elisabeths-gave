@@ -1046,6 +1046,8 @@ let CURRENT_GAME_ID = '';
 function unlock() {
   if (document.getElementById('pw-input').value.toLowerCase() === PASSWORD) {
     document.querySelector('.lock-box button').disabled = true;
+    // Unlock audio in the same user-gesture frame (before any setTimeout)
+    bgAudio.play().then(() => { bgAudio.pause(); bgAudio.currentTime = 0; }).catch(()=>{});
     playGiftAnimation(() => {
       document.getElementById('lock-screen').style.display = 'none';
       document.getElementById('main').style.display = 'block';
