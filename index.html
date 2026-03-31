@@ -2398,37 +2398,70 @@ const GameWM = (() => {
     gg.addColorStop(0,'#1a3a12');gg.addColorStop(1,'#0a1a08');
     ctx.fillStyle=gg;ctx.fillRect(0,LH*0.3,LW,LH);
     arcHUD(ctx,LW,score,hi,`⏱ ${Math.ceil(Math.max(0,timer))}`);
+
+    // === LAYER 1: all hole backgrounds ===
     holes.forEach(h=>{
       const hcx=OX+h.c*(HW+HGAPX)+HW/2;
       const hcy=OY+h.r*(HH+HGAPY)+HH/2;
-      // Hole
-      ctx.fillStyle='#110a00';
-      ctx.beginPath();ctx.ellipse(hcx,hcy+12,HW/2,HH/3,0,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#221500';
-      ctx.beginPath();ctx.ellipse(hcx,hcy+10,HW/2-5,HH/3-4,0,0,Math.PI*2);ctx.fill();
-      // Mole
-      if(h.up||h.flash>0){
-        const prog=h.up?h.progress:Math.max(0,1-h.flash/0.45);
-        const yOff=(1-prog)*(HH*0.7);
-        ctx.save();
-        ctx.beginPath();ctx.ellipse(hcx,hcy+12,HW/2,HH/3,0,0,Math.PI*2);ctx.clip();
-        const iw=76,ih=76;
-        if(moleImg&&moleImg.complete&&moleImg.naturalWidth>0){
-          ctx.drawImage(moleImg,hcx-iw/2,hcy-ih*0.6+yOff,iw,ih);
-        } else {
-          ctx.font='44px serif';ctx.textAlign='center';ctx.textBaseline='middle';
-          ctx.fillText('😊',hcx,hcy+yOff);
-        }
-        ctx.restore();
-        if(h.whacked||h.flash>0){
-          const alpha=Math.min(1,h.flash*2.5);
-          ctx.fillStyle=`rgba(255,60,60,${alpha*0.55})`;
-          ctx.beginPath();ctx.ellipse(hcx,hcy+12,HW/2,HH/3,0,0,Math.PI*2);ctx.fill();
-          ctx.font='26px serif';ctx.textAlign='center';ctx.textBaseline='middle';
-          ctx.globalAlpha=alpha;ctx.fillText('💫',hcx,hcy-20+yOff);ctx.globalAlpha=1;
-        }
+      ctx.fillStyle='#0a0800';
+      ctx.beginPath();ctx.ellipse(hcx,hcy+12,HW/2,HH/3+2,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#1a1000';
+      ctx.beginPath();ctx.ellipse(hcx,hcy+10,HW/2-4,HH/3-2,0,0,Math.PI*2);ctx.fill();
+    });
+
+    // === LAYER 2: moles popping UP (no clip — drawn above hole) ===
+    holes.forEach(h=>{
+      if(!h.up&&h.flash<=0) return;
+      const hcx=OX+h.c*(HW+HGAPX)+HW/2;
+      const hcy=OY+h.r*(HH+HGAPY)+HH/2;
+      const prog=h.up?h.progress:Math.max(0,1-h.flash/0.45);
+      const popPx=70; // total vertical pop distance above hole center
+      const moleCY=hcy+12-prog*popPx; // mole face center Y (rises upward)
+      const iw=82,ih=82;
+      ctx.save();
+      // Clip: only show mole above the bottom of the hole (so root disappears underground)
+      ctx.beginPath();
+      ctx.rect(hcx-iw/2-4,0,iw+8,hcy+12+(HH/3));
+      ctx.clip();
+      if(moleImg&&moleImg.complete&&moleImg.naturalWidth>0){
+        ctx.drawImage(moleImg,hcx-iw/2,moleCY-ih/2,iw,ih);
+      } else {
+        ctx.font='52px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('😊',hcx,moleCY);
+      }
+      if(h.whacked||h.flash>0){
+        const alpha=Math.min(1,h.flash*3);
+        ctx.globalAlpha=alpha*0.6;
+        ctx.fillStyle='#ff3030';
+        ctx.beginPath();ctx.arc(hcx,moleCY,iw/2,0,Math.PI*2);ctx.fill();
+        ctx.globalAlpha=1;
+      }
+      ctx.restore();
+      // Hit star
+      if(h.whacked||h.flash>0){
+        const alpha=Math.min(1,h.flash*3);
+        ctx.globalAlpha=alpha;
+        ctx.font='28px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText('💫',hcx+28,moleCY-34);
+        ctx.globalAlpha=1;
       }
     });
+
+    // === LAYER 3: hole front rim (drawn ON TOP so mole appears to emerge from hole) ===
+    holes.forEach(h=>{
+      const hcx=OX+h.c*(HW+HGAPX)+HW/2;
+      const hcy=OY+h.r*(HH+HGAPY)+HH/2;
+      // Bottom half of ellipse = the front "lip" closest to viewer
+      const rx=HW/2, ry=HH/3+2;
+      ctx.fillStyle='#2a1a06';
+      ctx.beginPath();
+      ctx.ellipse(hcx,hcy+12,rx,ry,0,0,Math.PI); // 0→PI = bottom arc
+      ctx.closePath();ctx.fill();
+      // Grass-green ring around hole
+      ctx.strokeStyle='#2d6e1e';ctx.lineWidth=3;
+      ctx.beginPath();ctx.ellipse(hcx,hcy+12,rx+2,ry+3,0,0,Math.PI*2);ctx.stroke();
+    });
+
     // Timer bar
     const barW=Math.max(0,(timer/30)*(LW*0.8));
     ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(LW*0.1,LH-28,LW*0.8,10);
@@ -2499,10 +2532,11 @@ const GameDJ = (() => {
 
   function newGame(){
     camY=0;score=0;
-    player={x:LW/2-PW/2,y:LH-120,vx:0,vy:JUMPV*0.5};
     platforms=[];
-    platforms.push({x:LW/2-PLATW/2,y:LH-70,w:PLATW,spring:false,moving:false,dx:0,e:'🎂'});
-    for(let i=1;i<18;i++) spawnPlat(LH-70-i*70);
+    // Tightly-spaced starting platforms so player can always land
+    for(let i=0;i<22;i++) platforms.push({x:Math.random()*(LW-PLATW),y:LH-60-i*55,w:PLATW,spring:false,moving:false,dx:0,e:PEMOJIS[i%PEMOJIS.length]});
+    // Start player just above first platform, with full jump velocity
+    player={x:LW/2-PW/2,y:LH-60-PH,vx:0,vy:JUMPV};
     state='playing';
   }
 
@@ -2512,6 +2546,7 @@ const GameDJ = (() => {
     if(keys['ArrowRight']||touchR) player.x+=300*dt;
     if(player.x+PW<0) player.x=LW;
     if(player.x>LW) player.x=-PW;
+    const prevY=player.y;
     player.vy+=GRAV*dt;
     player.y+=player.vy*dt;
     const screenY=player.y-camY;
@@ -2519,14 +2554,19 @@ const GameDJ = (() => {
     if(player.vy>0){
       platforms.forEach(p=>{
         const sy=p.y-camY;
-        if(player.x+PW>p.x+4&&player.x<p.x+p.w-4&&player.y+PH>sy&&player.y+PH<sy+PLATH+12){
-          player.vy=p.spring?JUMPV*1.55:JUMPV;sfxCard();
+        if(player.x+PW>p.x+6&&player.x<p.x+p.w-6){
+          // Continuous collision: did player bottom cross platform top this frame?
+          if(prevY+PH<=sy+8&&player.y+PH>=sy){
+            player.vy=p.spring?JUMPV*1.55:JUMPV;
+            player.y=sy-PH;
+            sfxCard();
+          }
         }
       });
     }
     platforms.forEach(p=>{if(p.moving){p.x+=p.dx*dt;if(p.x<0||p.x+p.w>LW) p.dx*=-1;}});
-    platforms=platforms.filter(p=>p.y-camY<LH+40);
-    while(platforms.length<20){const ty=Math.min(...platforms.map(p=>p.y));spawnPlat(ty-45-Math.random()*45);}
+    platforms=platforms.filter(p=>p.y-camY<LH+60);
+    while(platforms.length<22){const ty=Math.min(...platforms.map(p=>p.y));spawnPlat(ty-50-Math.random()*35);}
     if(player.y-camY>LH+60){hi=Math.max(hi,score);state='gameover';}
   }
 
