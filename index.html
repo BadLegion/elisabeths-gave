@@ -753,10 +753,10 @@
             <div class="arc-card-name">WHACK-A-MOLE</div>
             <div class="arc-card-desc">Bank Elisabeth i hovedet — hvis du tør!</div>
           </div>
-          <div class="arc-card" onclick="ARCADE.start('dj')">
-            <div class="arc-preview">🏔️</div>
-            <div class="arc-card-name">DOODLE JUMP</div>
-            <div class="arc-card-desc">Hop op ad platformene med Elisabeth</div>
+          <div class="arc-card" onclick="ARCADE.start('mr')">
+            <div class="arc-preview">🍄</div>
+            <div class="arc-card-name">SUPER ELISABETH</div>
+            <div class="arc-card-desc">Stamp svampene og saml stjerner!</div>
           </div>
         </div>
       </div>
@@ -1297,9 +1297,9 @@ const ARCADE = (() => {
   function start(id){
     document.getElementById('arc-menu').style.display='none';
     document.getElementById('arc-game').style.display='block';
-    const labels={si:'SPACE INVADERS',bk:'BREAKOUT',sn:'SNAKE',pm:'PAC-MAN',fb:'FLAPPY BIRD',tt:'TETRIS',wm:'WHACK-A-MOLE',dj:'DOODLE JUMP'};
+    const labels={si:'SPACE INVADERS',bk:'BREAKOUT',sn:'SNAKE',pm:'PAC-MAN',fb:'FLAPPY BIRD',tt:'TETRIS',wm:'WHACK-A-MOLE',mr:'SUPER ELISABETH'};
     document.getElementById('arc-game-label').textContent=labels[id]||id;
-    document.getElementById('ctrl-row').classList.toggle('active', id==='si'||id==='bk'||id==='dj');
+    document.getElementById('ctrl-row').classList.toggle('active', id==='si'||id==='bk'||id==='mr');
     document.getElementById('ctrl-dpad').classList.toggle('active', id==='sn'||id==='pm'||id==='tt');
     document.getElementById('ctrl-flap').classList.toggle('active', id==='fb');
     if(!canvas){
@@ -1309,7 +1309,7 @@ const ARCADE = (() => {
     }
     if(raf){ cancelAnimationFrame(raf); raf=null; }
     cur=id;
-    const gm={si:GameSI,bk:GameBK,sn:GameSN,pm:GamePM,fb:GameFB,tt:GameTT,wm:GameWM,dj:GameDJ};
+    const gm={si:GameSI,bk:GameBK,sn:GameSN,pm:GamePM,fb:GameFB,tt:GameTT,wm:GameWM,mr:GameMR};
     gm[id].init(canvas,ctx);
     let last=0;
     function loop(ts){
@@ -2399,67 +2399,56 @@ const GameWM = (() => {
     ctx.fillStyle=gg;ctx.fillRect(0,LH*0.3,LW,LH);
     arcHUD(ctx,LW,score,hi,`⏱ ${Math.ceil(Math.max(0,timer))}`);
 
-    // === LAYER 1: all hole backgrounds ===
+    const iw=84,ih=84;
     holes.forEach(h=>{
       const hcx=OX+h.c*(HW+HGAPX)+HW/2;
       const hcy=OY+h.r*(HH+HGAPY)+HH/2;
+      const hy=hcy+12; // hole centre Y
+      const rx=HW/2, ry=HH/3;
+
+      // ── LAYER 1: full hole shadow ──
       ctx.fillStyle='#0a0800';
-      ctx.beginPath();ctx.ellipse(hcx,hcy+12,HW/2,HH/3+2,0,0,Math.PI*2);ctx.fill();
-      ctx.fillStyle='#1a1000';
-      ctx.beginPath();ctx.ellipse(hcx,hcy+10,HW/2-4,HH/3-2,0,0,Math.PI*2);ctx.fill();
-    });
+      ctx.beginPath();ctx.ellipse(hcx,hy,rx,ry+2,0,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#180e00';
+      ctx.beginPath();ctx.ellipse(hcx,hy-2,rx-5,ry-2,0,0,Math.PI*2);ctx.fill();
 
-    // === LAYER 2: moles popping UP (no clip — drawn above hole) ===
-    holes.forEach(h=>{
-      if(!h.up&&h.flash<=0) return;
-      const hcx=OX+h.c*(HW+HGAPX)+HW/2;
-      const hcy=OY+h.r*(HH+HGAPY)+HH/2;
-      const prog=h.up?h.progress:Math.max(0,1-h.flash/0.45);
-      const popPx=70; // total vertical pop distance above hole center
-      const moleCY=hcy+12-prog*popPx; // mole face center Y (rises upward)
-      const iw=82,ih=82;
-      ctx.save();
-      // Clip: only show mole above the bottom of the hole (so root disappears underground)
-      ctx.beginPath();
-      ctx.rect(hcx-iw/2-4,0,iw+8,hcy+12+(HH/3));
-      ctx.clip();
-      if(moleImg&&moleImg.complete&&moleImg.naturalWidth>0){
-        ctx.drawImage(moleImg,hcx-iw/2,moleCY-ih/2,iw,ih);
-      } else {
-        ctx.font='52px serif';ctx.textAlign='center';ctx.textBaseline='middle';
-        ctx.fillText('😊',hcx,moleCY);
+      // ── LAYER 2: mole rising (clipped to above hole centre) ──
+      const prog=h.up?h.progress:(h.flash>0?Math.max(0,1-h.flash/0.45):0);
+      if(prog>0){
+        // mole image top: starts at hy (fully hidden), rises to hy-ih (fully visible)
+        const moleTop=hy+10-prog*(ih+10);
+        ctx.save();
+        ctx.beginPath();ctx.rect(0,0,LW,hy);ctx.clip(); // only above hole centre
+        if(moleImg&&moleImg.complete&&moleImg.naturalWidth>0){
+          ctx.drawImage(moleImg,hcx-iw/2,moleTop,iw,ih);
+        } else {
+          ctx.font='52px serif';ctx.textAlign='center';ctx.textBaseline='bottom';
+          ctx.fillText('😊',hcx,hy);
+        }
+        if(h.whacked||h.flash>0){
+          const a=Math.min(1,h.flash*3);
+          ctx.globalAlpha=a*0.55;ctx.fillStyle='#ff2020';
+          ctx.beginPath();ctx.arc(hcx,moleTop+ih/2,iw/2,0,Math.PI*2);ctx.fill();
+          ctx.globalAlpha=1;
+        }
+        ctx.restore();
+        if(h.whacked||h.flash>0){
+          const a=Math.min(1,h.flash*3);
+          ctx.globalAlpha=a;
+          ctx.font='26px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+          ctx.fillText('💫',hcx+30,hy-prog*60-10);
+          ctx.globalAlpha=1;
+        }
       }
-      if(h.whacked||h.flash>0){
-        const alpha=Math.min(1,h.flash*3);
-        ctx.globalAlpha=alpha*0.6;
-        ctx.fillStyle='#ff3030';
-        ctx.beginPath();ctx.arc(hcx,moleCY,iw/2,0,Math.PI*2);ctx.fill();
-        ctx.globalAlpha=1;
-      }
-      ctx.restore();
-      // Hit star
-      if(h.whacked||h.flash>0){
-        const alpha=Math.min(1,h.flash*3);
-        ctx.globalAlpha=alpha;
-        ctx.font='28px serif';ctx.textAlign='center';ctx.textBaseline='middle';
-        ctx.fillText('💫',hcx+28,moleCY-34);
-        ctx.globalAlpha=1;
-      }
-    });
 
-    // === LAYER 3: hole front rim (drawn ON TOP so mole appears to emerge from hole) ===
-    holes.forEach(h=>{
-      const hcx=OX+h.c*(HW+HGAPX)+HW/2;
-      const hcy=OY+h.r*(HH+HGAPY)+HH/2;
-      // Bottom half of ellipse = the front "lip" closest to viewer
-      const rx=HW/2, ry=HH/3+2;
-      ctx.fillStyle='#2a1a06';
+      // ── LAYER 3: front rim of hole drawn ON TOP of mole ──
+      ctx.fillStyle='#2a1700';
       ctx.beginPath();
-      ctx.ellipse(hcx,hcy+12,rx,ry,0,0,Math.PI); // 0→PI = bottom arc
+      ctx.ellipse(hcx,hy,rx,ry+2,0,0,Math.PI); // bottom half = front lip
       ctx.closePath();ctx.fill();
-      // Grass-green ring around hole
-      ctx.strokeStyle='#2d6e1e';ctx.lineWidth=3;
-      ctx.beginPath();ctx.ellipse(hcx,hcy+12,rx+2,ry+3,0,0,Math.PI*2);ctx.stroke();
+      // grass ring
+      ctx.strokeStyle='#3a8a22';ctx.lineWidth=3;
+      ctx.beginPath();ctx.ellipse(hcx,hy,rx+2,ry+4,0,0,Math.PI*2);ctx.stroke();
     });
 
     // Timer bar
@@ -2486,122 +2475,200 @@ const GameWM = (() => {
   return {init,update,draw,stop};
 })();
 
-// ── DOODLE JUMP ──
-const GameDJ = (() => {
+// ── SUPER ELISABETH (Mario-style) ──
+const GameMR = (() => {
   const LW=640,LH=460;
-  const PW=44,PH=44,PLATW=80,PLATH=14;
-  const GRAV=900,JUMPV=-540;
-  const PEMOJIS=['🎂','🎁','🎀','🎈','⭐','💜'];
-  let canvas,ctx,state='start',score=0,hi=0;
-  let player,platforms,camY,djImg=null,listening=false;
-  let keys={},touchL=false,touchR=false;
+  const PW=38,PH=50,GRAV=980,JUMPV=-540;
+  const EW=32,EH=32;
+  // Platforms: {x,y,w,h}
+  const PLATS=[
+    {x:0,   y:418,w:640,h:42},  // ground
+    {x:70,  y:340,w:120,h:14},
+    {x:255, y:288,w:100,h:14},
+    {x:415, y:318,w:110,h:14},
+    {x:525, y:252,w:90, h:14},
+    {x:148, y:212,w:86, h:14},
+    {x:318, y:176,w:102,h:14},
+    {x:28,  y:157,w:82, h:14},
+    {x:476, y:167,w:82, h:14},
+  ];
+  let canvas,ctx,state='start',score=0,hi=0,lives=3;
+  let player,enemies,stars,mrImg=null,listening=false;
+  let keys={},touchL=false,touchR=false,touchJump=false;
 
   function loadImg(){
-    if(djImg) return;
-    djImg=new Image();
-    djImg.src='379996518_6825102214202545_8322974256973727975_n-removebg-preview.png';
+    if(mrImg) return;
+    mrImg=new Image();
+    mrImg.src='379996518_6825102214202545_8322974256973727975_n-removebg-preview.png';
   }
 
   function setupInput(){
     if(listening) return; listening=true;
     document.addEventListener('keydown',e=>{
       keys[e.code]=true;
-      if((e.code==='Space'||e.code==='Enter')&&state!=='playing') newGame();
+      if((e.code==='Space'||e.code==='ArrowUp')&&state!=='playing') newGame();
     });
     document.addEventListener('keyup',e=>keys[e.code]=false);
-    const addT=(id,fn)=>{
-      const b=document.getElementById(id);
-      if(!b) return;
-      b.addEventListener('pointerdown',e=>{e.preventDefault();fn(true);},{passive:false});
-      b.addEventListener('pointerup',()=>fn(false));
-      b.addEventListener('pointerleave',()=>fn(false));
+    const addBtn=(id,down,up)=>{
+      const b=document.getElementById(id);if(!b)return;
+      b.addEventListener('pointerdown',e=>{e.preventDefault();down();},{passive:false});
+      b.addEventListener('pointerup',up);b.addEventListener('pointerleave',up);
     };
-    addT('mc-left', v=>touchL=v);
-    addT('mc-right',v=>touchR=v);
-    addT('mc-fire', v=>{if(v&&state!=='playing') newGame();});
+    addBtn('mc-left',()=>touchL=true,()=>touchL=false);
+    addBtn('mc-right',()=>touchR=true,()=>touchR=false);
+    addBtn('mc-fire',()=>{touchJump=true;if(state!=='playing')newGame();},()=>touchJump=false);
   }
 
   function init(c,cx){canvas=c;ctx=cx;loadImg();setupInput();state='start';}
-  function stop(){keys={};touchL=touchR=false;}
-
-  function spawnPlat(y){
-    const spring=Math.random()<0.12;
-    const moving=!spring&&Math.random()<0.18;
-    platforms.push({x:Math.random()*(LW-PLATW),y,w:PLATW,spring,moving,dx:moving?(Math.random()<.5?55:-55):0,e:PEMOJIS[Math.floor(Math.random()*PEMOJIS.length)]});
-  }
+  function stop(){keys={};touchL=touchR=touchJump=false;}
 
   function newGame(){
-    camY=0;score=0;
-    platforms=[];
-    // Tightly-spaced starting platforms so player can always land
-    for(let i=0;i<22;i++) platforms.push({x:Math.random()*(LW-PLATW),y:LH-60-i*55,w:PLATW,spring:false,moving:false,dx:0,e:PEMOJIS[i%PEMOJIS.length]});
-    // Start player just above first platform, with full jump velocity
-    player={x:LW/2-PW/2,y:LH-60-PH,vx:0,vy:JUMPV};
+    score=0;lives=3;
+    player={x:60,y:368,vx:0,vy:0,onGround:false,facing:1,inv:0,jumpUsed:false};
+    enemies=[
+      {x:220,y:386,vx:80, minX:20, maxX:390,alive:true,st:0},
+      {x:490,y:386,vx:-75,minX:310,maxX:630,alive:true,st:0},
+      {x:105,y:308,vx:65, minX:72, maxX:178,alive:true,st:0},
+      {x:448,y:286,vx:-60,minX:417,maxX:513,alive:true,st:0},
+      {x:345,y:144,vx:55, minX:320,maxX:408,alive:true,st:0},
+    ];
+    stars=[
+      {x:130,y:400},{x:220,y:400},{x:380,y:400},{x:510,y:400},{x:590,y:400},
+      {x:92, y:322},{x:148,y:322},{x:175,y:322},
+      {x:270,y:270},{x:305,y:270},{x:340,y:270},
+      {x:432,y:300},{x:468,y:300},{x:510,y:300},
+      {x:542,y:234},{x:580,y:234},
+      {x:163,y:194},{x:200,y:194},{x:228,y:194},
+      {x:333,y:158},{x:368,y:158},{x:405,y:158},
+      {x:40, y:139},{x:75, y:139},{x:100,y:139},
+      {x:490,y:149},{x:535,y:149},
+    ].map(s=>({...s,got:false}));
     state='playing';
   }
 
   function update(dt){
     if(state!=='playing') return;
-    if(keys['ArrowLeft']||touchL)  player.x-=300*dt;
-    if(keys['ArrowRight']||touchR) player.x+=300*dt;
-    if(player.x+PW<0) player.x=LW;
-    if(player.x>LW) player.x=-PW;
+    const left=keys['ArrowLeft']||touchL;
+    const right=keys['ArrowRight']||touchR;
+    const jump=keys['ArrowUp']||keys['Space']||touchJump;
+    if(left){player.vx=-210;player.facing=-1;}
+    else if(right){player.vx=210;player.facing=1;}
+    else player.vx*=0.7;
     const prevY=player.y;
     player.vy+=GRAV*dt;
     player.y+=player.vy*dt;
-    const screenY=player.y-camY;
-    if(screenY<LH*0.38){camY-=LH*0.38-screenY; score=Math.max(score,Math.floor(-camY/60));}
-    if(player.vy>0){
-      platforms.forEach(p=>{
-        const sy=p.y-camY;
-        if(player.x+PW>p.x+6&&player.x<p.x+p.w-6){
-          // Continuous collision: did player bottom cross platform top this frame?
-          if(prevY+PH<=sy+8&&player.y+PH>=sy){
-            player.vy=p.spring?JUMPV*1.55:JUMPV;
-            player.y=sy-PH;
-            sfxCard();
-          }
+    player.x=Math.max(0,Math.min(LW-PW,player.x+player.vx*dt));
+    // jump
+    if(jump&&player.onGround&&!player.jumpUsed){player.vy=JUMPV;player.onGround=false;player.jumpUsed=true;sfxCard();}
+    if(!jump)player.jumpUsed=false;
+    // platform collisions
+    player.onGround=false;
+    PLATS.forEach(pl=>{
+      if(player.x+PW>pl.x&&player.x<pl.x+pl.w){
+        // land on top
+        if(player.vy>=0&&prevY+PH<=pl.y+6&&player.y+PH>=pl.y){
+          player.y=pl.y-PH;player.vy=0;player.onGround=true;
         }
-      });
+        // bump head on bottom
+        if(player.vy<0&&prevY>=pl.y+pl.h-4&&player.y<=pl.y+pl.h){player.vy=80;}
+      }
+    });
+    if(player.inv>0)player.inv-=dt;
+    // enemies
+    enemies.forEach(e=>{
+      if(!e.alive){e.st-=dt;return;}
+      e.x+=e.vx*dt;
+      if(e.x<=e.minX){e.x=e.minX;e.vx=Math.abs(e.vx);}
+      if(e.x+EW>=e.maxX){e.x=e.maxX-EW;e.vx=-Math.abs(e.vx);}
+      // collision with player
+      if(player.inv<=0&&player.x+PW>e.x+3&&player.x<e.x+EW-3&&player.y+PH>e.y+3&&player.y<e.y+EH-3){
+        if(player.vy>0&&player.y+PH<e.y+EH*0.55){
+          // stomp
+          e.alive=false;e.st=0.45;score+=100;player.vy=JUMPV*0.5;sfxCard();
+        } else if(player.inv<=0){
+          lives--;player.inv=2.2;player.vy=JUMPV*0.45;
+          if(lives<=0){hi=Math.max(hi,score);state='gameover';}
+        }
+      }
+    });
+    // collect stars
+    stars.forEach(s=>{
+      if(s.got)return;
+      if(player.x+PW>s.x&&player.x<s.x+14&&player.y+PH>s.y&&player.y<s.y+14){s.got=true;score+=10;}
+    });
+    // fall off bottom
+    if(player.y>LH+30){
+      lives--;player.x=60;player.y=368;player.vx=0;player.vy=0;player.inv=2;
+      if(lives<=0){hi=Math.max(hi,score);state='gameover';}
     }
-    platforms.forEach(p=>{if(p.moving){p.x+=p.dx*dt;if(p.x<0||p.x+p.w>LW) p.dx*=-1;}});
-    platforms=platforms.filter(p=>p.y-camY<LH+60);
-    while(platforms.length<22){const ty=Math.min(...platforms.map(p=>p.y));spawnPlat(ty-50-Math.random()*35);}
-    if(player.y-camY>LH+60){hi=Math.max(hi,score);state='gameover';}
+    // all cleared bonus
+    if(stars.every(s=>s.got)&&enemies.every(e=>!e.alive)){score+=500;newGame();}
   }
 
   function draw(){
+    // sky
     const sky=ctx.createLinearGradient(0,0,0,LH);
-    sky.addColorStop(0,'#0a0520');sky.addColorStop(1,'#160a35');
+    sky.addColorStop(0,'#1a0533');sky.addColorStop(1,'#2d0a5a');
     ctx.fillStyle=sky;ctx.fillRect(0,0,LW,LH);
-    ctx.fillStyle='rgba(255,255,255,.4)';
-    for(let i=0;i<60;i++) ctx.fillRect((i*173+30)%LW,(i*97+15)%LH,i%8===0?2:1,i%8===0?2:1);
-    arcHUD(ctx,LW,score,hi,'');
-    platforms.forEach(p=>{
-      const sy=p.y-camY;
-      if(sy<-20||sy>LH+20) return;
-      ctx.fillStyle=p.spring?'#ffd700':p.moving?'#ff8c42':'#e8458c';
-      ctx.beginPath();ctx.roundRect(p.x,sy,p.w,PLATH,5);ctx.fill();
-      ctx.font='12px serif';ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.fillText(p.e,p.x+p.w/2,sy+PLATH/2+1);
-      if(p.spring){ctx.font='11px serif';ctx.fillText('🌀',p.x+p.w/2,sy-9);}
+    // background stars
+    ctx.fillStyle='rgba(255,255,255,.45)';
+    for(let i=0;i<55;i++)ctx.fillRect((i*137)%LW,(i*79)%290,i%9===0?2:1,i%9===0?2:1);
+    // platforms
+    PLATS.forEach(pl=>{
+      const isGnd=pl.h>20;
+      const pg=ctx.createLinearGradient(0,pl.y,0,pl.y+pl.h);
+      if(isGnd){pg.addColorStop(0,'#3d9c22');pg.addColorStop(0.25,'#2d7a18');pg.addColorStop(0.26,'#8B4513');pg.addColorStop(1,'#6B3410');}
+      else{pg.addColorStop(0,'#e8458c');pg.addColorStop(1,'#b02060');}
+      ctx.fillStyle=pg;
+      ctx.beginPath();ctx.roundRect(pl.x,pl.y,pl.w,pl.h,isGnd?0:6);ctx.fill();
+      if(!isGnd){
+        ctx.fillStyle='rgba(255,255,255,.18)';
+        ctx.beginPath();ctx.roundRect(pl.x+2,pl.y+2,pl.w-4,5,4);ctx.fill();
+        // question blocks on platforms
+        const qx=pl.x+pl.w/2-10,qy=pl.y-22;
+        ctx.fillStyle='#ff8c42';ctx.beginPath();ctx.roundRect(qx,qy,20,20,3);ctx.fill();
+        ctx.fillStyle='#fff';ctx.font=`bold 13px 'Press Start 2P',monospace`;
+        ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('?',qx+10,qy+11);
+      }
     });
-    const px=player.x,py=player.y-camY;
-    if(djImg&&djImg.complete&&djImg.naturalWidth>0){
-      ctx.save();
-      if(player.vy>0){ctx.translate(px+PW/2,py+PH/2);ctx.rotate(0.12);ctx.translate(-PW/2,-PH/2);}
-      ctx.drawImage(djImg,px,py,PW,PH);
-      ctx.restore();
-    } else {arcEM(ctx,'😊',px+PW/2,py+PH/2,36);}
+    // coins/stars
+    ctx.font='13px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    stars.forEach(s=>{if(!s.got)ctx.fillText('⭐',s.x+7,s.y+7);});
+    // enemies
+    enemies.forEach(e=>{
+      if(!e.alive){
+        if(e.st>0){ctx.globalAlpha=e.st/0.45;ctx.font='26px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('💫',e.x+EW/2,e.y-8);ctx.globalAlpha=1;}
+        return;
+      }
+      ctx.font='30px serif';ctx.textAlign='center';ctx.textBaseline='bottom';
+      ctx.fillText('🍄',e.x+EW/2,e.y+EH);
+    });
+    // player
+    const blink=player.inv>0&&Math.floor(player.inv*9)%2===0;
+    if(!blink){
+      if(mrImg&&mrImg.complete&&mrImg.naturalWidth>0){
+        ctx.save();
+        if(player.facing<0){ctx.translate(player.x+PW/2,0);ctx.scale(-1,1);ctx.drawImage(mrImg,-PW/2,player.y,PW,PH);}
+        else ctx.drawImage(mrImg,player.x,player.y,PW,PH);
+        ctx.restore();
+      } else arcEM(ctx,'😊',player.x+PW/2,player.y+PH/2,36);
+    }
+    // HUD
+    arcHUD(ctx,LW,score,hi,'');
+    // lives
+    ctx.font=`9px 'Press Start 2P',monospace`;ctx.fillStyle='#ff6688';
+    ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.fillText('♥'.repeat(Math.max(0,lives)),12,28);
+    // overlay
     if(state==='start'||state==='gameover'){
-      ctx.fillStyle='rgba(0,0,0,.8)';ctx.fillRect(LW/2-190,LH/2-85,380,170);
+      ctx.fillStyle='rgba(0,0,0,.83)';ctx.fillRect(LW/2-205,LH/2-90,410,185);
       ctx.textAlign='center';ctx.textBaseline='middle';
-      ctx.font=`bold 14px 'Press Start 2P',monospace`;
+      ctx.font=`bold 13px 'Press Start 2P',monospace`;
       const col=state==='gameover'?'#ff2255':'#e8458c';
       ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=20;
-      ctx.fillText(state==='gameover'?'AU DA! 💫':'DOODLE JUMP',LW/2,LH/2-32);ctx.shadowBlur=0;
+      ctx.fillText(state==='gameover'?'GAME OVER 🍄':'SUPER ELISABETH',LW/2,LH/2-40);ctx.shadowBlur=0;
       ctx.font=`8px 'Press Start 2P',monospace`;ctx.fillStyle='#aaa';
-      ctx.fillText(state==='gameover'?`HØJDE: ${score}  REKORD: ${hi}`:'BRUG ◀▶ / PILETASTER',LW/2,LH/2+6);
+      ctx.fillText(state==='gameover'?`SCORE: ${score}  REKORD: ${hi}`:'STAMP SVAMPENE! SAML STJERNERNE!',LW/2,LH/2+2);
       if(Math.floor(Date.now()/500)%2){
         ctx.fillStyle='#ffd700';ctx.shadowColor='#ffd700';ctx.shadowBlur=10;
         ctx.fillText('SPACE / FIRE FOR AT STARTE',LW/2,LH/2+44);ctx.shadowBlur=0;
