@@ -356,48 +356,53 @@
       .personal-video-section{ padding:1.25rem 1rem .5rem; }
       .charity-inner{ flex-direction:column; gap:1rem; }
       .games-toolbar{ gap:.5rem; }
-      /* music btn → bottom-right on mobile */
       #music-btn { top:auto; left:auto; bottom:16px; right:16px; }
-      /* hide desktop tab bar on mobile */
       #tab-bar { display:none !important; }
-      /* show mobile dropdown nav */
-      #mobile-nav { display:block; }
+      #hamburger-btn { display:flex !important; }
     }
     @media(max-width:360px){ .games-grid{ grid-template-columns:1fr; } }
 
-    /* ── MOBILE DROPDOWN NAV ── */
-    #mobile-nav {
+    /* ── HAMBURGER BUTTON ── */
+    #hamburger-btn {
       display:none;
-      position:sticky; top:0; z-index:200;
-      background:rgba(11,13,26,0.92); backdrop-filter:blur(16px);
-      border-bottom:1px solid var(--border);
-      padding:.55rem .9rem;
+      position:fixed; top:12px; left:12px; z-index:260;
+      width:46px; height:46px;
+      background:rgba(0,0,0,.6); backdrop-filter:blur(12px);
+      border:1px solid rgba(255,255,255,.15); border-radius:12px;
+      flex-direction:column; align-items:center; justify-content:center; gap:5px;
+      cursor:pointer; transition:background .2s;
     }
-    #mobile-nav-btn {
-      width:100%; background:rgba(255,255,255,0.06);
-      border:1px solid var(--border); border-radius:12px;
-      color:var(--text); font-size:.88rem; font-weight:600;
-      padding:.65rem 1rem; cursor:pointer;
-      display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-      transition:background .2s;
+    #hamburger-btn:hover { background:rgba(124,90,240,.35); }
+    #hamburger-btn span {
+      display:block; width:22px; height:2px;
+      background:var(--text); border-radius:2px;
+      transition:transform .22s, opacity .22s;
     }
-    #mobile-nav-btn:hover { background:rgba(124,90,240,.2); }
-    #mobile-nav-dropdown {
-      display:none; position:absolute; left:.9rem; right:.9rem; top:calc(100% - .1rem);
-      background:#12141f; border:1px solid rgba(124,90,240,.35); border-radius:14px;
-      overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.6); z-index:300;
+    #hamburger-btn.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+    #hamburger-btn.open span:nth-child(2){ opacity:0; transform:scaleX(0); }
+    #hamburger-btn.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+    /* ── MOBILE MENU OVERLAY ── */
+    #mobile-menu {
+      display:none; flex-direction:column;
+      position:fixed; top:68px; left:0; right:0; z-index:255;
+      background:rgba(10,12,24,.97); backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(124,90,240,.3);
+      box-shadow:0 16px 48px rgba(0,0,0,.6);
+      animation:menuSlide .18s ease;
     }
-    #mobile-nav-dropdown.open { display:block; }
-    .mnav-item {
+    #mobile-menu.open { display:flex; }
+    @keyframes menuSlide { from{transform:translateY(-12px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .mmenu-item {
       width:100%; background:none; border:none; border-bottom:1px solid var(--border);
-      color:var(--muted); font-size:.9rem; font-weight:600;
-      padding:.85rem 1.25rem; cursor:pointer; text-align:left;
-      display:flex; align-items:center; gap:.6rem;
+      color:var(--muted); font-size:1rem; font-weight:600;
+      padding:1rem 1.4rem; cursor:pointer; text-align:left;
+      display:flex; align-items:center; gap:.65rem;
       transition:background .15s, color .15s;
     }
-    .mnav-item:last-child { border-bottom:none; }
-    .mnav-item:hover, .mnav-item.active { background:rgba(124,90,240,.18); color:var(--text); }
-    .mnav-item.active { color:#fff; }
+    .mmenu-item:last-child { border-bottom:none; }
+    .mmenu-item:hover  { background:rgba(124,90,240,.15); color:var(--text); }
+    .mmenu-item.active { background:rgba(124,90,240,.22); color:#fff; }
 
     #bg-audio { display:none; }
 
@@ -426,7 +431,7 @@
     .arc-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; max-width:540px; margin:0 auto; }
     .arc-card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:1.5rem 1rem; text-align:center; cursor:pointer; transition:transform .2s,border-color .2s,box-shadow .2s; }
     .arc-card:hover { transform:translateY(-6px); border-color:rgba(124,90,240,.6); box-shadow:0 14px 44px rgba(124,90,240,.25); }
-    .arc-preview { font-size:1.5rem; line-height:1.6; margin-bottom:.7rem; letter-spacing:.1rem; }
+    .arc-preview { font-size:2.6rem; line-height:1.2; margin-bottom:.7rem; }
     .arc-card-name { font-family:'Press Start 2P',monospace; font-size:.62rem; color:var(--gold); margin-bottom:.35rem; }
     .arc-card-desc { font-size:.8rem; color:var(--muted); }
     .arc-topbar { display:flex; align-items:center; gap:1rem; padding:.7rem 0; max-width:640px; margin:0 auto; }
@@ -506,20 +511,19 @@
     </div>
   </nav>
 
-  <!-- MOBILE DROPDOWN NAV -->
-  <nav id="mobile-nav">
-    <button id="mobile-nav-btn" onclick="toggleMobileNav()">
-      <span id="mobile-nav-label">🎉 Forside</span>
-      <span>▾</span>
-    </button>
-    <div id="mobile-nav-dropdown">
-      <button class="mnav-item active" onclick="showTab('home');closeMobileNav()">🎉 Forside</button>
-      <button class="mnav-item" onclick="showTab('games');closeMobileNav()">🎮 Alle dine nye spil</button>
-      <button class="mnav-item" onclick="showTab('arcade');closeMobileNav()">🕹️ Retro Arkade</button>
-      <button class="mnav-item" onclick="showTab('goodcause');closeMobileNav()">💡 Hvad er Humble Bundle?</button>
-      <button class="mnav-item" onclick="showTab('gifts');closeMobileNav()">🎁 Hvordan indløser jeg?</button>
-    </div>
-  </nav>
+  <!-- HAMBURGER BUTTON (mobile only) -->
+  <button id="hamburger-btn" onclick="toggleHamburger()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- MOBILE MENU OVERLAY -->
+  <div id="mobile-menu">
+    <button class="mmenu-item active" onclick="showTab('home');closeHamburger()">🎉 Forside</button>
+    <button class="mmenu-item" onclick="showTab('games');closeHamburger()">🎮 Alle dine nye spil</button>
+    <button class="mmenu-item" onclick="showTab('arcade');closeHamburger()">🕹️ Retro Arkade</button>
+    <button class="mmenu-item" onclick="showTab('goodcause');closeHamburger()">💡 Hvad er Humble Bundle?</button>
+    <button class="mmenu-item" onclick="showTab('gifts');closeHamburger()">🎁 Hvordan indløser jeg?</button>
+  </div>
 
   <!-- TAB: FORSIDE -->
   <div id="tab-home" class="tab-panel active">
@@ -527,7 +531,7 @@
       <span class="hero-emoji">🎉</span>
       <h1>Tillykke med fødselsdagen, Elisabeth!</h1>
       <div class="hero-givers">💜 Med kærlighed fra Fie og Simon 💜</div>
-      <p>Du har fået <strong>to</strong> Humble Bundle-gavebunker fyldt med spil — brug fanerne foroven til at udforske dem, se trailerene og find dine gavelinks. 🎁</p>
+      <p>Vi har købt dig <strong>to</strong> bundter fyldt med spil — kig rundt i fanerne, se trailerene for spillene og find dine gavelinks, så du kan komme i gang! 🎁</p>
     </div>
     <div class="personal-video-section">
       <div class="video-label">🎬 En personlig hilsen fra Fie og Simon</div>
@@ -578,27 +582,27 @@
         <div class="arc-subtitle">Vælg et spil og tag en pause fra fødselsdagen 🎂</div>
         <div class="arc-grid">
           <div class="arc-card" onclick="ARCADE.start('si')">
-            <div class="arc-preview">🎁💝🎀🎁💝<br>🎁💝🎀🎁💝</div>
+            <div class="arc-preview">👾</div>
             <div class="arc-card-name">SPACE INVADERS</div>
             <div class="arc-card-desc">Skyd gaver ned og gem dig bag kager</div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('bk')">
-            <div class="arc-preview">🎂🎁🎀🎈⭐<br>💜🎂🎁🎀🎈</div>
+            <div class="arc-preview">🧱</div>
             <div class="arc-card-name">BREAKOUT</div>
             <div class="arc-card-desc">Smash fødselsdagsblokkene med bolden</div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('sn')">
-            <div class="arc-preview" style="font-size:2rem">🐍</div>
+            <div class="arc-preview">🐍</div>
             <div class="arc-card-name">SNAKE</div>
             <div class="arc-card-desc">Spis fødselsdagsmad og bliv større</div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('pm')">
-            <div class="arc-preview" style="font-size:2rem">🟡</div>
+            <div class="arc-preview">🟡</div>
             <div class="arc-card-name">PAC-MAN</div>
             <div class="arc-card-desc">Spis stjerner og undgå spøgelserne</div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('fb')" style="grid-column:1/-1;max-width:260px;margin:0 auto;width:100%">
-            <div class="arc-preview" style="font-size:2.2rem">🐦✨</div>
+            <div class="arc-preview">🐦</div>
             <div class="arc-card-name">FLAPPY BIRD</div>
             <div class="arc-card-desc">Elisabeth flyver igennem fødselsdagspipes!</div>
           </div>
@@ -654,10 +658,10 @@
         <div class="charity-inner">
           <div class="charity-logo">🛒</div>
           <div class="charity-text">
-            <h3>Humble Bundle — spil til en god pris</h3>
-            <p><strong>Humble Bundle</strong> er en hjemmeside der sælger bunker af spil til nedsat pris. Man betaler hvad man selv vil (eller en fast pris), og for hvert køb går en del af pengene automatisk til velgørenhed.</p>
-            <p>Fie og Simon har købt <strong>to gavelinks</strong> til dig — det er hele pakker af spil, som du indløser direkte på din Steam-konto. Alle spillene er dine for evigt!</p>
-            <p>👉 Gå til fanen <em>"Hvordan indløser jeg?"</em> for at hente dine gavelinks.</p>
+            <h3>Din gave er fra Humble Bundle</h3>
+            <p>Vi har købt dine spil på <strong>Humble Bundle</strong> — det er en hjemmeside der sælger store bunter af spil til en rigtig god pris. For hvert køb donerer de automatisk en del til velgørenhed, så det er dobbelt fedt!</p>
+            <p>Vi har købt <strong>to gavelinks</strong> til dig. Hvert link giver dig adgang til en hel bunke spil, som du indløser direkte på din Steam-konto — og de er dine for evigt!</p>
+            <p>👉 Tryk på <em>"Hvordan indløser jeg?"</em> for at hente dine links.</p>
           </div>
         </div>
       </div>
@@ -667,9 +671,9 @@
         <div class="charity-inner">
           <div class="charity-logo">🎮</div>
           <div class="charity-text">
-            <h3 style="color:#6ab0ff">Hvad er Steam?</h3>
-            <p><strong>Steam</strong> er det mest populære sted at købe og spille PC-spil — tænk det som en App Store, men til computerspil. Når du indløser et Humble Bundle-gavelink, havner alle spillene direkte i din Steam-konto, så du kan downloade og spille dem hvornår du vil.</p>
-            <p>Har du ikke Steam endnu? Det er gratis at oprette en konto på <strong>store.steampowered.com</strong>.</p>
+            <h3 style="color:#6ab0ff">Har du Steam?</h3>
+            <p><strong>Steam</strong> er en gratis app til PC, og det er her du spiller spillene. Tænk på det som en App Store til computerspil. Når du indløser dit gavelink, popper alle spillene op i dit Steam-bibliotek, og så downloader du bare dem du har lyst til.</p>
+            <p>Har du ikke Steam endnu? Gå ind på <strong>store.steampowered.com</strong> og opret en gratis konto — det tager 2 minutter. Spørg os bare hvis du er i tvivl! 😊</p>
           </div>
         </div>
       </div>
@@ -679,9 +683,9 @@
         <div class="charity-inner">
           <div class="charity-logo">🌍</div>
           <div class="charity-text">
-            <h3 style="color:#7ddf7d">De støttede en god sag</h3>
-            <p><em>ESA All-Star Alliance Bundle</em> donerede til <strong>ESA Foundation</strong> — en organisation der arbejder for at gøre spilindustrien mere mangfoldig, bl.a. med stipendier til unge spiludviklere fra underrepræsenterede grupper.</p>
-            <p>Så din gave er ikke bare sjov — den gør faktisk verden en smule bedre. 💚</p>
+            <h3 style="color:#7ddf7d">Vi støttede en god sag</h3>
+            <p>Da vi kødte din gave, gik en del af pengene til <strong>ESA Foundation</strong> — en organisation der giver stipendier til unge spiludviklere fra underrepræsenterede grupper, så spilindustrien bliver mere mangfoldig.</p>
+            <p>Så din gave er ikke bare sjov — den gør faktisk verden en lille smule bedre. 💚</p>
           </div>
         </div>
       </div>
@@ -701,7 +705,7 @@
         <div class="help-card simon-card">
           <div class="help-icon">🛠️</div>
           <h3>Fie &amp; Simon hjælper</h3>
-          <p>Har du brug for hjælp til at komme i gang med spillene, indløse dine gavelinks eller finde en ny gaming-PC? Spørg bare — Simon kender hardware og finder den bedste løsning til dit budget.</p>
+          <p>Sidder du fast med at indløse dine links, downloade et spil, eller har din PC ikke power nok? Simon kender hardware og hjælper med at finde den bedste løsning til dit budget. Bare sig til!</p>
           <span class="help-link">Bare spørg 😊</span>
         </div>
       </div>
@@ -712,14 +716,14 @@
   <div id="tab-gifts" class="tab-panel">
     <div class="gift-section">
       <div class="gift-title">🎁 Dine gavelinks</div>
-      <p class="gift-subtitle">Tryk på knappen for at åbne dit gavelink — eller scan QR-koden med en anden enhed.</p>
+      <p class="gift-subtitle">Tryk på knappen herunder for at åbne dit gavelink direkte — eller scan QR-koden fra en anden enhed.</p>
 
       <!-- Step guide -->
       <div class="redeem-steps">
-        <div class="step"><span class="step-n">1</span><span>Åbn gavelinket herunder (eller scan QR-koden)</span></div>
-        <div class="step"><span class="step-n">2</span><span>Log ind på din Humble Bundle-konto (eller opret en gratis)</span></div>
-        <div class="step"><span class="step-n">3</span><span>Klik "Claim" — spillene bliver tilknyttet din Steam-konto</span></div>
-        <div class="step"><span class="step-n">4</span><span>Åbn Steam og download dine nye spil 🎮</span></div>
+        <div class="step"><span class="step-n">1</span><span>Tryk "Åbn gavelink" (eller scan QR-koden med en anden enhed)</span></div>
+        <div class="step"><span class="step-n">2</span><span>Log ind på Humble Bundle — eller opret en gratis konto</span></div>
+        <div class="step"><span class="step-n">3</span><span>Tryk "Claim" — spillene tilknyttes automatisk din Steam-konto</span></div>
+        <div class="step"><span class="step-n">4</span><span>Åbn Steam og download lige præcis de spil du har lyst til! 🎮</span></div>
       </div>
 
       <div class="gift-cards">
@@ -754,6 +758,7 @@ function unlock() {
     document.getElementById('main').style.display = 'block';
     document.getElementById('tab-bar').style.display = 'block';
     document.getElementById('music-btn').style.display = 'flex';
+    // hamburger is CSS-only (display:none on desktop, flex on mobile via media query)
     launchConfetti();
     buildPage();
     startParticles();
@@ -778,25 +783,25 @@ function showTab(id) {
   document.getElementById('tab-' + id).classList.add('active');
   const idx = ['home','games','arcade','goodcause','gifts'].indexOf(id);
   document.querySelectorAll('.tab-btn')[idx].classList.add('active');
-  // update mobile nav label + active state
-  const lbl = document.getElementById('mobile-nav-label');
-  if (lbl) lbl.textContent = TAB_LABELS[id] || id;
-  document.querySelectorAll('.mnav-item').forEach((el,i) =>
+  document.querySelectorAll('.mmenu-item').forEach((el,i) =>
     el.classList.toggle('active', i === idx));
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
-// ── MOBILE NAV ──
-function toggleMobileNav() {
-  document.getElementById('mobile-nav-dropdown').classList.toggle('open');
+// ── HAMBURGER MENU ──
+function toggleHamburger() {
+  document.getElementById('hamburger-btn').classList.toggle('open');
+  document.getElementById('mobile-menu').classList.toggle('open');
 }
-function closeMobileNav() {
-  document.getElementById('mobile-nav-dropdown').classList.remove('open');
+function closeHamburger() {
+  document.getElementById('hamburger-btn').classList.remove('open');
+  document.getElementById('mobile-menu').classList.remove('open');
 }
 document.addEventListener('click', e => {
-  const nav = document.getElementById('mobile-nav');
-  if (nav && !nav.contains(e.target))
-    document.getElementById('mobile-nav-dropdown').classList.remove('open');
+  const hbtn = document.getElementById('hamburger-btn');
+  const menu = document.getElementById('mobile-menu');
+  if (hbtn && menu && !hbtn.contains(e.target) && !menu.contains(e.target))
+    closeHamburger();
 });
 
 // ── CONFETTI ──
