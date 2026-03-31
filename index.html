@@ -645,6 +645,7 @@
       <button class="tab-btn" onclick="showTab('arcade')">🕹️ Retro Arkade</button>
       <button class="tab-btn" onclick="showTab('goodcause')">💡 Hvad er Humble Bundle?</button>
       <button class="tab-btn" onclick="showTab('gifts')">🎁 Hvordan indløser jeg?</button>
+      <button class="tab-btn" onclick="showTab('help')">🛠️ Teknisk hjælp</button>
     </div>
   </nav>
 
@@ -660,6 +661,7 @@
     <button class="mmenu-item" onclick="showTab('arcade');closeHamburger()">🕹️ Retro Arkade</button>
     <button class="mmenu-item" onclick="showTab('goodcause');closeHamburger()">💡 Hvad er Humble Bundle?</button>
     <button class="mmenu-item" onclick="showTab('gifts');closeHamburger()">🎁 Hvordan indløser jeg?</button>
+    <button class="mmenu-item" onclick="showTab('help');closeHamburger()">🛠️ Teknisk hjælp</button>
   </div>
 
   <!-- TAB: FORSIDE -->
@@ -818,18 +820,6 @@
         </div>
       </div>
 
-      <!-- Hvad er Steam -->
-      <div class="charity-box" style="background:linear-gradient(135deg,rgba(23,113,214,.1),rgba(23,113,214,.05));border-color:rgba(23,113,214,.3);margin-bottom:1.5rem">
-        <div class="charity-inner">
-          <div class="charity-logo">🎮</div>
-          <div class="charity-text">
-            <h3 style="color:#6ab0ff">Har du Steam?</h3>
-            <p><strong>Steam</strong> er en gratis app til PC, og det er her du spiller spillene. Tænk på det som en App Store til computerspil. Når du indløser dit gavelink, popper alle spillene op i dit Steam-bibliotek, og så downloader du bare dem du har lyst til.</p>
-            <p>Har du ikke Steam endnu? Gå ind på <strong>store.steampowered.com</strong> og opret en gratis konto — det tager 2 minutter. Spørg os bare hvis du er i tvivl! 😊</p>
-          </div>
-        </div>
-      </div>
-
       <!-- Velgørenhed -->
       <div class="charity-box" style="background:linear-gradient(135deg,rgba(0,200,100,.08),rgba(0,150,80,.05));border-color:rgba(0,200,100,.25);margin-bottom:1.5rem">
         <div class="charity-inner">
@@ -842,8 +832,13 @@
         </div>
       </div>
 
-      <!-- Teknisk hjælp -->
-      <div class="section-header" style="margin-top:2rem">
+    </div>
+  </div>
+
+  <!-- TAB: TEKNISK HJÆLP -->
+  <div id="tab-help" class="tab-panel">
+    <div class="section">
+      <div class="section-header">
         <span class="section-icon">🛠️</span>
         <h2>Teknisk hjælp</h2>
       </div>
@@ -1005,7 +1000,7 @@ function showTab(id) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  const idx = ['home','games','arcade','goodcause','gifts'].indexOf(id);
+  const idx = ['home','games','arcade','goodcause','gifts','help'].indexOf(id);
   document.querySelectorAll('.tab-btn')[idx].classList.add('active');
   document.querySelectorAll('.mmenu-item').forEach((el,i) =>
     el.classList.toggle('active', i === idx));
