@@ -574,6 +574,59 @@
       .ctrl-row.active  { display:flex !important; }
       .ctrl-dpad.active { display:grid !important; }
     }
+
+    /* ── BIRTHDAY COUNTER ── */
+    .bday-counter{background:linear-gradient(135deg,rgba(232,69,140,.13),rgba(255,140,66,.08));border:1px solid rgba(232,69,140,.3);border-radius:18px;padding:1.6rem 1.2rem 1.2rem;margin:1.5rem 1rem 0;text-align:center;}
+    .bc-title{font-family:'Press Start 2P',monospace;font-size:.62rem;color:var(--muted);margin-bottom:1.1rem;letter-spacing:.1em;text-transform:uppercase;}
+    .bc-grid{display:flex;align-items:flex-end;justify-content:center;flex-wrap:wrap;gap:.3rem;}
+    .bc-unit{display:flex;flex-direction:column;align-items:center;min-width:52px;}
+    .bc-num{font-family:'Press Start 2P',monospace;font-size:1.35rem;color:var(--accent);text-shadow:0 0 18px rgba(232,69,140,.55);line-height:1;}
+    .bc-label{font-size:.58rem;color:var(--muted);margin-top:.25rem;text-transform:uppercase;letter-spacing:.05em;}
+    .bc-sep{color:rgba(255,255,255,.2);font-size:1.4rem;padding:0 .05rem;margin-bottom:.55rem;}
+    .bc-sub{font-size:.82rem;color:var(--muted);margin-top:.9rem;}
+    @media(max-width:500px){.bc-num{font-size:1rem;}.bc-unit{min-width:42px;}}
+
+    /* ── BIRTHDAY FACTS ── */
+    .facts-section{margin:1.5rem 1rem 0;}
+    .facts-title{font-family:'Press Start 2P',monospace;font-size:.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1rem;text-align:center;}
+    .facts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;}
+    @media(max-width:700px){.facts-grid{grid-template-columns:1fr 1fr;}}
+    @media(max-width:450px){.facts-grid{grid-template-columns:1fr;}}
+    .fact-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1rem;display:flex;flex-direction:column;gap:.5rem;align-items:flex-start;}
+    .fact-emoji{font-size:1.5rem;line-height:1;}
+    .fact-card p{font-size:.82rem;color:var(--muted);line-height:1.5;margin:0;}
+
+    /* ── GAME RECOMMENDATIONS ── */
+    .rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-top:1.2rem;}
+    @media(max-width:640px){.rec-grid{grid-template-columns:1fr;}}
+    .rec-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.25rem;display:flex;flex-direction:column;gap:.55rem;transition:border-color .2s,transform .2s;}
+    .rec-card:hover{border-color:rgba(232,69,140,.5);transform:translateY(-3px);}
+    .rec-game{font-size:.95rem;font-weight:700;color:var(--text);}
+    .rec-bundle{display:inline-block;font-size:.68rem;font-weight:700;background:rgba(232,69,140,.18);color:var(--accent);border-radius:20px;padding:.18rem .65rem;width:fit-content;}
+    .rec-desc{font-size:.82rem;color:var(--muted);line-height:1.55;flex:1;}
+    .rec-quote{font-size:.8rem;color:var(--gold);font-style:italic;border-left:3px solid rgba(255,215,0,.4);padding-left:.7rem;margin-top:.3rem;}
+
+    /* ── ENVELOPE ── */
+    .envelope-wrap{margin:1.5rem 1rem 0;display:flex;justify-content:center;}
+    .envelope{position:relative;width:320px;cursor:pointer;user-select:none;}
+    .envelope.opened .env-lid{transform:rotateX(-180deg);}
+    .envelope.opened .env-letter{transform:translateY(-120px);opacity:1;}
+    .env-body{width:320px;height:200px;background:linear-gradient(160deg,#2a0a1a,#1a0a25);border:2px solid rgba(232,69,140,.4);border-radius:4px 4px 18px 18px;position:relative;overflow:visible;}
+    .env-flap-back{position:absolute;top:0;left:0;width:0;height:0;border-left:160px solid transparent;border-right:160px solid transparent;border-top:90px solid rgba(232,69,140,.18);z-index:0;}
+    .env-lid{position:absolute;top:0;left:0;width:0;height:0;border-left:160px solid transparent;border-right:160px solid transparent;border-top:90px solid rgba(232,69,140,.32);transform-origin:top center;transform-style:preserve-3d;transition:transform .55s ease;z-index:4;}
+    .envelope-wrap{perspective:800px;}
+    .env-bottom{position:absolute;bottom:0;left:0;width:0;height:0;border-left:160px solid transparent;border-right:160px solid transparent;border-bottom:108px solid rgba(180,50,110,.22);z-index:1;}
+    .env-seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.8rem;z-index:5;transition:opacity .3s;}
+    .envelope.opened .env-seal{opacity:0;}
+    .env-letter{position:absolute;left:16px;right:16px;bottom:14px;background:linear-gradient(160deg,#1e0a2e,#120818);border:1px solid rgba(232,69,140,.35);border-radius:10px;padding:1.1rem 1.1rem .9rem;z-index:2;transform:translateY(0);opacity:0;transition:transform .55s .2s ease,opacity .55s .2s ease;pointer-events:none;}
+    .envelope.opened .env-letter{pointer-events:auto;}
+    .env-letter-text{font-size:.8rem;line-height:1.65;color:var(--text);}
+    .env-letter-text strong{color:var(--accent);}
+    .env-letter-sig{margin-top:.7rem;font-size:.78rem;color:var(--gold);text-align:right;}
+    .env-hint{font-size:.72rem;color:var(--muted);text-align:center;margin-top:.6rem;font-style:italic;}
+
+    /* ── ARCADE HIGHSCORE BADGES ── */
+    .arc-card-hi{font-size:.55rem;color:var(--gold);font-family:'Press Start 2P',monospace;margin-top:.3rem;min-height:.9rem;}
   </style>
 </head>
 <body>
@@ -672,6 +725,62 @@
       <div class="hero-givers">💜 Med kærlighed fra Fie og Simon 💜</div>
       <p>Vi har købt dig <strong>to</strong> bundter fyldt med spil — kig rundt i fanerne, se trailerene for spillene og find dine gavelinks, så du kan komme i gang! 🎁</p>
     </div>
+    <!-- BIRTHDAY COUNTER -->
+    <div class="bday-counter">
+      <div class="bc-title">🎂 Du er præcis...</div>
+      <div class="bc-grid">
+        <div class="bc-unit"><span class="bc-num" id="bc-years">28</span><span class="bc-label">år</span></div>
+        <div class="bc-sep">:</div>
+        <div class="bc-unit"><span class="bc-num" id="bc-months">0</span><span class="bc-label">mdr</span></div>
+        <div class="bc-sep">:</div>
+        <div class="bc-unit"><span class="bc-num" id="bc-days">0</span><span class="bc-label">dage</span></div>
+        <div class="bc-sep">:</div>
+        <div class="bc-unit"><span class="bc-num" id="bc-hours">0</span><span class="bc-label">timer</span></div>
+        <div class="bc-sep">:</div>
+        <div class="bc-unit"><span class="bc-num" id="bc-minutes">00</span><span class="bc-label">min</span></div>
+        <div class="bc-sep">:</div>
+        <div class="bc-unit"><span class="bc-num" id="bc-seconds">00</span><span class="bc-label">sek</span></div>
+      </div>
+      <div class="bc-sub">gammel 🥳 Tillykke Elisabeth!</div>
+    </div>
+
+    <!-- ENVELOPE -->
+    <div class="envelope-wrap">
+      <div>
+        <div class="envelope" id="envelope" onclick="openEnvelope()">
+          <div class="env-body">
+            <div class="env-flap-back"></div>
+            <div class="env-lid"></div>
+            <div class="env-bottom"></div>
+            <div class="env-seal">💌</div>
+            <div class="env-letter">
+              <div class="env-letter-text">
+                Kære <strong>Elisabeth</strong>,<br><br>
+                Du er en af de mest skøre, varme og fantastiske mennesker vi kender — og vi er virkelig glade for at have dig i vores liv.<br><br>
+                Vi håber du får en dag fyldt med glæde, spil og alt det du fortjener. Du er <strong>den bedste af de bedste og endnu bedre</strong> — det ved du godt 😄<br><br>
+                Nu er det tid til at game! 🎮
+              </div>
+              <div class="env-letter-sig">— Fie &amp; Simon 💜</div>
+            </div>
+          </div>
+        </div>
+        <div class="env-hint" id="env-hint">Tryk på konvolutten for at åbne ✉️</div>
+      </div>
+    </div>
+
+    <!-- BIRTHDAY FACTS -->
+    <div class="facts-section">
+      <div class="facts-title">📅 Den dag du kom til verden — 31. marts 1998</div>
+      <div class="facts-grid">
+        <div class="fact-card"><div class="fact-emoji">🏆</div><p><strong>Titanic</strong> fejede Oscar-uddelingen — filmen vandt 11 priser kun 8 dage før din fødselsdag</p></div>
+        <div class="fact-card"><div class="fact-emoji">🌍</div><p>Verden talte <strong>5,9 milliarder</strong> mennesker. I dag er vi 8,2 mia. — du er vokset op i godt selskab</p></div>
+        <div class="fact-card"><div class="fact-emoji">🔍</div><p><strong>Google</strong> blev grundlagt samme år som dig. Du og søgemaskinen er jævnaldrende!</p></div>
+        <div class="fact-card"><div class="fact-emoji">📀</div><p>Man betalte <strong>~150 kr</strong> for en cd. Ingen Spotify, ingen streaming — bare plastik og liner notes</p></div>
+        <div class="fact-card"><div class="fact-emoji">💻</div><p><strong>Windows 98</strong> kom ud samme sommer. Den blå "skærm af død" var et kendt syn i husholdningerne</p></div>
+        <div class="fact-card"><div class="fact-emoji">📺</div><p>Ingen YouTube, ingen iPhone, ingen Netflix. Prime time TV og Blockbuster Video regerede verden</p></div>
+      </div>
+    </div>
+
     <div class="personal-video-section">
       <div class="video-label">🎬 En personlig hilsen fra Fie og Simon</div>
       <div class="personal-video-wrap" id="personal-video-container">
@@ -695,6 +804,42 @@
         <span class="section-icon">🎮</span>
         <h2>Alle dine nye spil</h2>
         <span class="tag" id="games-count">19 spil</span>
+      </div>
+      <!-- Fie & Simon's picks -->
+      <div class="section-header" style="margin-top:1.5rem">
+        <span class="section-icon">⭐</span>
+        <h2>Fie &amp; Simons anbefalinger</h2>
+      </div>
+      <div class="rec-grid">
+        <div class="rec-card">
+          <div class="rec-game">🎭 Pentiment</div>
+          <span class="rec-bundle">🏆 ESA Bundle</span>
+          <div class="rec-desc">Et unikt håndtegnet mysterium-spil i middelalderens Bayern. Nærmere en interaktiv tegneserie end et klassisk spil — og utrolig godt lavet.</div>
+          <div class="rec-quote">Fie: "Start her — du bliver suget ind fra første minut"</div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-game">💣 Keep Talking and Nobody Explodes</div>
+          <span class="rec-bundle">🎮 Multiplayer Bundle</span>
+          <div class="rec-desc">En spiller ser en bombe på skærmen — de andre råber instruktioner fra en manual. Garanteret kaos og latterdøde. Perfekt til selskaber!</div>
+          <div class="rec-quote">Simon: "Det SKAL prøves næste gang vi ses"</div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-game">🗡️ Dishonored 2</div>
+          <span class="rec-bundle">🏆 ESA Bundle</span>
+          <div class="rec-desc">Stealth-action med total frihed i, hvordan du løser opgaver. Smuk verden, fængende historie og en af de bedste singleplayer-oplevelser i bundtet.</div>
+          <div class="rec-quote">Simon: "Bedre end del 1 — det er sjældent"</div>
+        </div>
+        <div class="rec-card">
+          <div class="rec-game">🤖 Clone Drone in the Danger Zone</div>
+          <span class="rec-bundle">🎮 Multiplayer Bundle</span>
+          <div class="rec-desc">Du er en robot-gladiator der skal overleve bølger af fjender med sværd og laser. Absurd, sjovt og co-op fra første sekund.</div>
+          <div class="rec-quote">Fie: "Prøv det med Simon — totalt vanvittigt"</div>
+        </div>
+      </div>
+
+      <div class="section-header" style="margin-top:2rem">
+        <span class="section-icon">🎮</span>
+        <h2>Alle dine spil</h2>
       </div>
       <div class="games-toolbar">
         <div class="search-wrap">
@@ -724,41 +869,49 @@
             <div class="arc-preview">👾</div>
             <div class="arc-card-name">SPACE INVADERS</div>
             <div class="arc-card-desc">Skyd gaver ned og gem dig bag kager</div>
+            <div class="arc-card-hi" id="hs-si"></div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('bk')">
             <div class="arc-preview">🧱</div>
             <div class="arc-card-name">BREAKOUT</div>
             <div class="arc-card-desc">Smash fødselsdagsblokkene med bolden</div>
+            <div class="arc-card-hi" id="hs-bk"></div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('sn')">
             <div class="arc-preview">🐍</div>
             <div class="arc-card-name">SNAKE</div>
             <div class="arc-card-desc">Spis fødselsdagsmad og bliv større</div>
+            <div class="arc-card-hi" id="hs-sn"></div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('pm')">
             <div class="arc-preview">🟡</div>
             <div class="arc-card-name">PAC-MAN</div>
             <div class="arc-card-desc">Spis stjerner og undgå spøgelserne</div>
+            <div class="arc-card-hi" id="hs-pm"></div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('fb')">
             <div class="arc-preview">🐦</div>
             <div class="arc-card-name">FLAPPY BIRD</div>
             <div class="arc-card-desc">Elisabeth flyver igennem fødselsdagspipes!</div>
+            <div class="arc-card-hi" id="hs-fb"></div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('tt')">
             <div class="arc-preview">🧩</div>
             <div class="arc-card-name">TETRIS</div>
             <div class="arc-card-desc">Stap fødselsdagsblokke i rækkerne</div>
+            <div class="arc-card-hi" id="hs-tt"></div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('wm')">
             <div class="arc-preview">🔨</div>
             <div class="arc-card-name">WHACK-A-MOLE</div>
             <div class="arc-card-desc">Bank Elisabeth i hovedet — hvis du tør!</div>
+            <div class="arc-card-hi" id="hs-wm"></div>
           </div>
           <div class="arc-card" onclick="ARCADE.start('mr')">
             <div class="arc-preview">🍄</div>
             <div class="arc-card-name">SUPER ELISABETH</div>
             <div class="arc-card-desc">Stamp svampene og saml stjerner!</div>
+            <div class="arc-card-hi" id="hs-mr"></div>
           </div>
         </div>
       </div>
@@ -899,6 +1052,7 @@
 <script>
 // ── PASSWORD ──
 const PASSWORD = "tillykke";
+let CURRENT_GAME_ID = '';
 function unlock() {
   if (document.getElementById('pw-input').value.toLowerCase() === PASSWORD) {
     document.querySelector('.lock-box button').disabled = true;
@@ -1205,6 +1359,66 @@ function buildPage() {
   ALL_GAMES.forEach(g => grid.appendChild(makeCard(g)));
   new QRCode(document.getElementById('gift-qr-1'), {text:GIFTS[0], width:140, height:140, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
   new QRCode(document.getElementById('gift-qr-2'), {text:GIFTS[1], width:140, height:140, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
+  startBirthdayCounter();
+  refreshHighscoreBadges();
+}
+
+// ── BIRTHDAY COUNTER ──
+function startBirthdayCounter() {
+  const born = new Date('1998-03-31T00:00:00');
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    const now = new Date();
+    let diff = now - born;
+    const MS_YEAR  = 365.25*24*3600*1000;
+    const MS_MONTH = 30.4375*24*3600*1000;
+    const MS_DAY   = 24*3600*1000;
+    const years  = Math.floor(diff / MS_YEAR);  diff -= years  * MS_YEAR;
+    const months = Math.floor(diff / MS_MONTH); diff -= months * MS_MONTH;
+    const days   = Math.floor(diff / MS_DAY);   diff -= days   * MS_DAY;
+    const hours  = Math.floor(diff / 3600000);  diff -= hours  * 3600000;
+    const mins   = Math.floor(diff / 60000);    diff -= mins   * 60000;
+    const secs   = Math.floor(diff / 1000);
+    document.getElementById('bc-years').textContent   = years;
+    document.getElementById('bc-months').textContent  = months;
+    document.getElementById('bc-days').textContent    = days;
+    document.getElementById('bc-hours').textContent   = hours;
+    document.getElementById('bc-minutes').textContent = pad(mins);
+    document.getElementById('bc-seconds').textContent = pad(secs);
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+// ── ENVELOPE ──
+function openEnvelope() {
+  const env = document.getElementById('envelope');
+  const hint = document.getElementById('env-hint');
+  if (!env.classList.contains('opened')) {
+    env.classList.add('opened');
+    hint.textContent = '💜';
+    sfxCard();
+  }
+}
+
+// ── HIGHSCORES ──
+function hsKey(id){ return 'arcade_hi_' + id; }
+function loadHi(id){ return parseInt(localStorage.getItem(hsKey(id)) || '0'); }
+function saveHi(id, score){
+  const prev = loadHi(id);
+  if(score > prev){
+    localStorage.setItem(hsKey(id), score);
+    refreshHighscoreBadges();
+  }
+}
+function refreshHighscoreBadges(){
+  const ids = ['si','bk','sn','pm','fb','tt','wm','mr'];
+  ids.forEach(id => {
+    const el = document.getElementById('hs-' + id);
+    if(!el) return;
+    const hi = loadHi(id);
+    el.textContent = hi > 0 ? '🏆 REKORD: ' + hi : '';
+  });
 }
 
 // ── SEARCH + FILTER ──
@@ -1304,8 +1518,9 @@ const ARCADE = (() => {
     }
     if(raf){ cancelAnimationFrame(raf); raf=null; }
     cur=id;
+    CURRENT_GAME_ID=id;
     const gm={si:GameSI,bk:GameBK,sn:GameSN,pm:GamePM,fb:GameFB,tt:GameTT,wm:GameWM,mr:GameMR};
-    gm[id].init(canvas,ctx);
+    gm[id].init(canvas,ctx,id);
     let last=0;
     function loop(ts){
       raf=requestAnimationFrame(loop);
@@ -1645,7 +1860,7 @@ const GameBK = (() => {
     addT('mc-right',v=>keys['ArrowRight']=v);
   }
 
-  function init(c,cx){canvas=c;ctx=cx;setupInput();newGame();}
+  function init(c,cx,gid){canvas=c;ctx=cx;if(gid)hi=loadHi(gid);setupInput();newGame();}
   function stop(){keys={};touchF=false;}
 
   function newGame(){
@@ -1680,7 +1895,7 @@ const GameBK = (() => {
     if(ball.x-ball.r<0){ball.x=ball.r;ball.vx=Math.abs(ball.vx);}
     if(ball.x+ball.r>LW){ball.x=LW-ball.r;ball.vx=-Math.abs(ball.vx);}
     if(ball.y-ball.r<0){ball.y=ball.r;ball.vy=Math.abs(ball.vy);}
-    if(ball.y>LH+20){if(--lives<=0){hi=Math.max(hi,score);state='gameover';}else{ball={x:LW/2,y:LH-58,vx:210*(Math.random()<.5?1:-1),vy:-280,r:9};state='start';}return;}
+    if(ball.y>LH+20){if(--lives<=0){hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='gameover';}else{ball={x:LW/2,y:LH-58,vx:210*(Math.random()<.5?1:-1),vy:-280,r:9};state='start';}return;}
     if(ball.vy>0&&ball.y+ball.r>=paddle.y-paddle.h/2&&ball.y-ball.r<=paddle.y+paddle.h/2&&ball.x>=paddle.x-paddle.w/2&&ball.x<=paddle.x+paddle.w/2){
       ball.vy=-Math.abs(ball.vy);ball.vx=(ball.x-paddle.x)/(paddle.w/2)*320;
     }
@@ -1694,7 +1909,7 @@ const GameBK = (() => {
         break;
       }
     }
-    if(!bricks.some(b=>b.alive)){hi=Math.max(hi,score);state='win';}
+    if(!bricks.some(b=>b.alive)){hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='win';}
     touchF=false;
   }
 
@@ -1769,7 +1984,7 @@ const GameSN = (() => {
     addT('mc-center',()=>{ if(state!=='playing') newGame(); });
   }
 
-  function init(c,cx){canvas=c;ctx=cx;setupInput();state='start';}
+  function init(c,cx,gid){canvas=c;ctx=cx;if(gid)hi=loadHi(gid);setupInput();state='start';}
   function stop(){}
 
   function newGame(){
@@ -1791,7 +2006,7 @@ const GameSN = (() => {
     sti-=1/speed;
     const h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
     if(h.x<0||h.x>=COLS||h.y<0||h.y>=ROWS||snake.some(s=>s.x===h.x&&s.y===h.y)){
-      hi=Math.max(hi,score);state='gameover';return;
+      hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='gameover';return;
     }
     snake.unshift(h);
     if(h.x===food.x&&h.y===food.y){score+=10;sfxCard();speed=Math.min(18,speed+0.3);placeFood();}
@@ -1882,7 +2097,7 @@ const GamePM = (() => {
     addT('mc-center',()=>{ if(state!=='playing') newGame(); });
   }
 
-  function init(c,cx){canvas=c;ctx=cx;setupInput();state='start';}
+  function init(c,cx,gid){canvas=c;ctx=cx;if(gid)hi=loadHi(gid);setupInput();state='start';}
   function stop(){}
 
   function newGame(){
@@ -1936,10 +2151,10 @@ const GamePM = (() => {
       } else { moveE(g,4,dt); }
       if(Math.abs(g.r-player.r)<=1&&Math.abs(g.c-player.c)<=1){
         if(fright){g.r=2;g.c=2;g.x=2*TS+TS/2;g.y=2*TS+TS/2;score+=200;}
-        else{hi=Math.max(hi,score);state='gameover';}
+        else{hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='gameover';}
       }
     });
-    if(!pellets.some(p=>p.alive)&&!powers.some(p=>p.alive)){hi=Math.max(hi,score);state='win';}
+    if(!pellets.some(p=>p.alive)&&!powers.some(p=>p.alive)){hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='win';}
   }
 
   function draw(){
@@ -2033,7 +2248,7 @@ const GameFB = (() => {
     else if(state==='playing') bird.vy=FLAP_V;
   }
 
-  function init(c,cx){canvas=c;ctx=cx;loadBirdImg();setupInput();state='start';}
+  function init(c,cx,gid){canvas=c;ctx=cx;if(gid)hi=loadHi(gid);loadBirdImg();setupInput();state='start';}
   function stop(){}
 
   function newGame(){
@@ -2058,7 +2273,7 @@ const GameFB = (() => {
     // Ceiling
     if(bird.y<BIRD_H/2){ bird.y=BIRD_H/2; bird.vy=0; }
     // Floor
-    if(bird.y>LH-BIRD_H/2){ hi=Math.max(hi,score); state='dead'; return; }
+    if(bird.y>LH-BIRD_H/2){ hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi); state='dead'; return; }
     // Pipes
     pipeTimer+=dt;
     if(pipeTimer>=PIPE_INTERVAL){ pipeTimer=0; spawnPipe(); }
@@ -2072,7 +2287,7 @@ const GameFB = (() => {
       const by=bird.y-BIRD_H/2+8, bh=BIRD_H-16;
       const inX=bx+bw>p.x&&bx<p.x+PIPE_W;
       if(inX&&(by<p.gapY||by+bh>p.gapY+PIPE_GAP)){
-        hi=Math.max(hi,score); state='dead';
+        hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi); state='dead';
       }
     });
   }
@@ -2183,7 +2398,7 @@ const GameTT = (() => {
     addT('mc-center',()=>state!=='playing'&&newGame());
   }
 
-  function init(c,cx){canvas=c;ctx=cx;setupInput();state='start';}
+  function init(c,cx,gid){canvas=c;ctx=cx;if(gid)hi=loadHi(gid);setupInput();state='start';}
   function stop(){}
 
   function randPiece(){
@@ -2233,7 +2448,7 @@ const GameTT = (() => {
     }));
     clearLines();
     piece=next;next=randPiece();
-    if(!valid(piece.shape,piece.x,piece.y)){hi=Math.max(hi,score);state='gameover';}
+    if(!valid(piece.shape,piece.x,piece.y)){hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='gameover';}
     dropTimer=0;
   }
 
@@ -2357,7 +2572,7 @@ const GameWM = (() => {
     if(b) b.addEventListener('pointerdown',e=>{e.preventDefault();if(state!=='playing') newGame();},{passive:false});
   }
 
-  function init(c,cx){canvas=c;ctx=cx;loadImg();setupInput();state='start';}
+  function init(c,cx,gid){canvas=c;ctx=cx;if(gid)hi=loadHi(gid);loadImg();setupInput();state='start';}
   function stop(){}
 
   function newGame(){
@@ -2368,7 +2583,7 @@ const GameWM = (() => {
   function update(dt){
     if(state!=='playing') return;
     timer-=dt;
-    if(timer<=0){hi=Math.max(hi,score);state='gameover';return;}
+    if(timer<=0){hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='gameover';return;}
     spawnTimer-=dt;
     if(spawnTimer<=0){
       const down=holes.filter(h=>!h.up&&!h.whacked&&h.flash<=0);
@@ -2514,7 +2729,7 @@ const GameMR = (() => {
     addBtn('mc-fire',()=>{touchJump=true;if(state!=='playing')newGame();},()=>touchJump=false);
   }
 
-  function init(c,cx){canvas=c;ctx=cx;loadImg();setupInput();state='start';}
+  function init(c,cx,gid){canvas=c;ctx=cx;if(gid)hi=loadHi(gid);loadImg();setupInput();state='start';}
   function stop(){keys={};touchL=touchR=touchJump=false;}
 
   function newGame(){
@@ -2582,7 +2797,7 @@ const GameMR = (() => {
           e.alive=false;e.st=0.45;score+=100;player.vy=JUMPV*0.5;sfxCard();
         } else if(player.inv<=0){
           lives--;player.inv=2.2;player.vy=JUMPV*0.45;
-          if(lives<=0){hi=Math.max(hi,score);state='gameover';}
+          if(lives<=0){hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='gameover';}
         }
       }
     });
@@ -2594,7 +2809,7 @@ const GameMR = (() => {
     // fall off bottom
     if(player.y>LH+30){
       lives--;player.x=60;player.y=368;player.vx=0;player.vy=0;player.inv=2;
-      if(lives<=0){hi=Math.max(hi,score);state='gameover';}
+      if(lives<=0){hi=Math.max(hi,score);saveHi(CURRENT_GAME_ID,hi);state='gameover';}
     }
     // all cleared bonus
     if(stars.every(s=>s.got)&&enemies.every(e=>!e.alive)){score+=500;newGame();}
