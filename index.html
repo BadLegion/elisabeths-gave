@@ -401,6 +401,24 @@
 
     #bg-audio { display:none; }
 
+    /* ── REDEEM STEPS ── */
+    .redeem-steps { display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.8rem; max-width:520px; margin-left:auto; margin-right:auto; }
+    .step { display:flex; align-items:flex-start; gap:.9rem; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:14px; padding:.75rem 1rem; font-size:.88rem; line-height:1.5; }
+    .step-n { flex-shrink:0; width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.8rem; color:#fff; }
+
+    /* ── GIFT OPEN BTN ── */
+    .gift-open-btn {
+      display:block; width:100%; margin-bottom:.75rem;
+      padding:.85rem 1rem; border-radius:14px; border:none; cursor:pointer;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:#fff; font-size:1rem; font-weight:700;
+      box-shadow:0 4px 20px rgba(124,90,240,.4);
+      transition:transform .15s, opacity .15s;
+    }
+    .gift-open-btn:hover  { opacity:.9; transform:scale(1.02); }
+    .gift-open-btn:active { transform:scale(.97); }
+    .gift-qr-label { font-size:.72rem; color:var(--muted); text-align:center; margin-bottom:.5rem; }
+
     /* ── RETRO ARKADE ── */
     .arcade-wrap { padding:1.5rem 1rem 3rem; }
     .arc-title { font-family:'Press Start 2P',monospace; font-size:clamp(.9rem,3vw,1.5rem); text-align:center; color:var(--gold); text-shadow:0 0 24px rgba(255,215,0,.5); margin-bottom:.5rem; }
@@ -481,10 +499,10 @@
   <nav id="tab-bar">
     <div class="tabs">
       <button class="tab-btn active" onclick="showTab('home')">🎉 Forside</button>
-      <button class="tab-btn" onclick="showTab('games')">🎮 Alle spil</button>
+      <button class="tab-btn" onclick="showTab('games')">🎮 Alle dine nye spil</button>
       <button class="tab-btn" onclick="showTab('arcade')">🕹️ Retro Arkade</button>
-      <button class="tab-btn" onclick="showTab('goodcause')">💚 God sag</button>
-      <button class="tab-btn" onclick="showTab('gifts')">🎁 Dine gavelinks</button>
+      <button class="tab-btn" onclick="showTab('goodcause')">💡 Hvad er Humble Bundle?</button>
+      <button class="tab-btn" onclick="showTab('gifts')">🎁 Hvordan indløser jeg?</button>
     </div>
   </nav>
 
@@ -496,10 +514,10 @@
     </button>
     <div id="mobile-nav-dropdown">
       <button class="mnav-item active" onclick="showTab('home');closeMobileNav()">🎉 Forside</button>
-      <button class="mnav-item" onclick="showTab('games');closeMobileNav()">🎮 Alle spil</button>
+      <button class="mnav-item" onclick="showTab('games');closeMobileNav()">🎮 Alle dine nye spil</button>
       <button class="mnav-item" onclick="showTab('arcade');closeMobileNav()">🕹️ Retro Arkade</button>
-      <button class="mnav-item" onclick="showTab('goodcause');closeMobileNav()">💚 God sag</button>
-      <button class="mnav-item" onclick="showTab('gifts');closeMobileNav()">🎁 Dine gavelinks</button>
+      <button class="mnav-item" onclick="showTab('goodcause');closeMobileNav()">💡 Hvad er Humble Bundle?</button>
+      <button class="mnav-item" onclick="showTab('gifts');closeMobileNav()">🎁 Hvordan indløser jeg?</button>
     </div>
   </nav>
 
@@ -532,7 +550,7 @@
     <div class="section">
       <div class="section-header">
         <span class="section-icon">🎮</span>
-        <h2>Alle spil</h2>
+        <h2>Alle dine nye spil</h2>
         <span class="tag" id="games-count">19 spil</span>
       </div>
       <div class="games-toolbar">
@@ -579,6 +597,11 @@
             <div class="arc-card-name">PAC-MAN</div>
             <div class="arc-card-desc">Spis stjerner og undgå spøgelserne</div>
           </div>
+          <div class="arc-card" onclick="ARCADE.start('fb')" style="grid-column:1/-1;max-width:260px;margin:0 auto;width:100%">
+            <div class="arc-preview" style="font-size:2.2rem">🐦✨</div>
+            <div class="arc-card-name">FLAPPY BIRD</div>
+            <div class="arc-card-desc">Elisabeth flyver igennem fødselsdagspipes!</div>
+          </div>
         </div>
       </div>
 
@@ -597,6 +620,10 @@
           <button class="mc mc-fire" id="mc-fire">🚀 SKYD / START</button>
           <button class="mc" id="mc-right">▶</button>
         </div>
+        <!-- Single tap (Flappy Bird) -->
+        <div class="ctrl-row" id="ctrl-flap">
+          <button class="mc mc-fire" id="mc-flap" style="font-size:1.1rem">🐦 FLAP!</button>
+        </div>
         <!-- D-Pad (Snake & Pac-Man) -->
         <div class="ctrl-dpad" id="ctrl-dpad">
           <div class="mc-dot"></div>
@@ -614,22 +641,55 @@
     </div>
   </div>
 
-  <!-- TAB: GOD SAG -->
+  <!-- TAB: HVAD ER HUMBLE BUNDLE -->
   <div id="tab-goodcause" class="tab-panel">
     <div class="section">
       <div class="section-header">
-        <span class="section-icon">💚</span>
-        <h2>Vi støttede en god sag</h2>
+        <span class="section-icon">💡</span>
+        <h2>Hvad er Humble Bundle?</h2>
       </div>
-      <div class="charity-box">
+
+      <!-- Forklaring af Humble Bundle -->
+      <div class="charity-box" style="margin-bottom:1.5rem">
         <div class="charity-inner">
-          <div class="charity-logo">🤝</div>
+          <div class="charity-logo">🛒</div>
           <div class="charity-text">
-            <h3>Humble Bundle donerer til velgørenhed</h3>
-            <p>En del af pengene fra dit gavekøb går automatisk til velgørende formål. <em>The ESA All-Star Alliance Bundle</em> støtter <strong>ESA Foundation</strong> — en organisation der arbejder for at gøre spilindustrien mere mangfoldig og tilgængelig, bl.a. med stipendier til unge spiludviklere fra underrepræsenterede grupper.</p>
-            <p>Så din gave er ikke bare sjov — den gør faktisk verden en smule bedre. 🌍</p>
+            <h3>Humble Bundle — spil til en god pris</h3>
+            <p><strong>Humble Bundle</strong> er en hjemmeside der sælger bunker af spil til nedsat pris. Man betaler hvad man selv vil (eller en fast pris), og for hvert køb går en del af pengene automatisk til velgørenhed.</p>
+            <p>Fie og Simon har købt <strong>to gavelinks</strong> til dig — det er hele pakker af spil, som du indløser direkte på din Steam-konto. Alle spillene er dine for evigt!</p>
+            <p>👉 Gå til fanen <em>"Hvordan indløser jeg?"</em> for at hente dine gavelinks.</p>
           </div>
         </div>
+      </div>
+
+      <!-- Hvad er Steam -->
+      <div class="charity-box" style="background:linear-gradient(135deg,rgba(23,113,214,.1),rgba(23,113,214,.05));border-color:rgba(23,113,214,.3);margin-bottom:1.5rem">
+        <div class="charity-inner">
+          <div class="charity-logo">🎮</div>
+          <div class="charity-text">
+            <h3 style="color:#6ab0ff">Hvad er Steam?</h3>
+            <p><strong>Steam</strong> er det mest populære sted at købe og spille PC-spil — tænk det som en App Store, men til computerspil. Når du indløser et Humble Bundle-gavelink, havner alle spillene direkte i din Steam-konto, så du kan downloade og spille dem hvornår du vil.</p>
+            <p>Har du ikke Steam endnu? Det er gratis at oprette en konto på <strong>store.steampowered.com</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Velgørenhed -->
+      <div class="charity-box" style="background:linear-gradient(135deg,rgba(0,200,100,.08),rgba(0,150,80,.05));border-color:rgba(0,200,100,.25);margin-bottom:1.5rem">
+        <div class="charity-inner">
+          <div class="charity-logo">🌍</div>
+          <div class="charity-text">
+            <h3 style="color:#7ddf7d">De støttede en god sag</h3>
+            <p><em>ESA All-Star Alliance Bundle</em> donerede til <strong>ESA Foundation</strong> — en organisation der arbejder for at gøre spilindustrien mere mangfoldig, bl.a. med stipendier til unge spiludviklere fra underrepræsenterede grupper.</p>
+            <p>Så din gave er ikke bare sjov — den gør faktisk verden en smule bedre. 💚</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teknisk hjælp -->
+      <div class="section-header" style="margin-top:2rem">
+        <span class="section-icon">🛠️</span>
+        <h2>Teknisk hjælp</h2>
       </div>
       <div class="help-grid">
         <a class="help-card" href="https://www.nvidia.com/da-dk/geforce-now/" target="_blank" rel="noopener">
@@ -641,32 +701,43 @@
         <div class="help-card simon-card">
           <div class="help-icon">🛠️</div>
           <h3>Fie &amp; Simon hjælper</h3>
-          <p>Har du brug for hjælp til at komme i gang med spillene eller finde en ny gaming-PC på et tidspunkt — spørg bare! Simon kender til hardware og finder den bedste løsning til din økonomi og behov.</p>
+          <p>Har du brug for hjælp til at komme i gang med spillene, indløse dine gavelinks eller finde en ny gaming-PC? Spørg bare — Simon kender hardware og finder den bedste løsning til dit budget.</p>
           <span class="help-link">Bare spørg 😊</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TAB: GAVELINKS -->
+  <!-- TAB: HVORDAN INDLØSER JEG -->
   <div id="tab-gifts" class="tab-panel">
     <div class="gift-section">
       <div class="gift-title">🎁 Dine gavelinks</div>
-      <p class="gift-subtitle">Scan QR-koden med din telefon og indløs din gave direkte på Humble Bundle.</p>
+      <p class="gift-subtitle">Tryk på knappen for at åbne dit gavelink — eller scan QR-koden med en anden enhed.</p>
+
+      <!-- Step guide -->
+      <div class="redeem-steps">
+        <div class="step"><span class="step-n">1</span><span>Åbn gavelinket herunder (eller scan QR-koden)</span></div>
+        <div class="step"><span class="step-n">2</span><span>Log ind på din Humble Bundle-konto (eller opret en gratis)</span></div>
+        <div class="step"><span class="step-n">3</span><span>Klik "Claim" — spillene bliver tilknyttet din Steam-konto</span></div>
+        <div class="step"><span class="step-n">4</span><span>Åbn Steam og download dine nye spil 🎮</span></div>
+      </div>
+
       <div class="gift-cards">
         <div class="gift-card">
           <div class="gift-card-icon">🏆</div>
           <h3>ESA All-Star Alliance</h3>
           <p class="sub">Pentiment, Mafia Trilogy, Dishonored 2, Far Cry Primal og mere</p>
+          <button class="gift-open-btn" id="gift-btn-1" onclick="openGift(0)">🎁 Åbn gavelink</button>
+          <div class="gift-qr-label">— eller scan fra anden enhed —</div>
           <div class="gift-qr-wrap" id="gift-qr-1"></div>
-          <p class="gift-scan">📱 Scan for at indløse</p>
         </div>
         <div class="gift-card">
           <div class="gift-card-icon">🎮</div>
           <h3>Multiplayer Madness 2026</h3>
           <p class="sub">Keep Talking, Clone Drone, Party Club, Bogos Binted og mere</p>
+          <button class="gift-open-btn" id="gift-btn-2" onclick="openGift(1)">🎁 Åbn gavelink</button>
+          <div class="gift-qr-label">— eller scan fra anden enhed —</div>
           <div class="gift-qr-wrap" id="gift-qr-2"></div>
-          <p class="gift-scan">📱 Scan for at indløse</p>
         </div>
       </div>
     </div>
@@ -697,8 +768,8 @@ function unlock() {
 
 // ── TABS ──
 const TAB_LABELS = {
-  home:'🎉 Forside', games:'🎮 Alle spil',
-  arcade:'🕹️ Retro Arkade', goodcause:'💚 God sag', gifts:'🎁 Dine gavelinks'
+  home:'🎉 Forside', games:'🎮 Alle dine nye spil',
+  arcade:'🕹️ Retro Arkade', goodcause:'💡 Hvad er Humble Bundle?', gifts:'🎁 Hvordan indløser jeg?'
 };
 function showTab(id) {
   sfxTab();
@@ -898,14 +969,18 @@ function makeCard(g) {
   return card;
 }
 
+function openGift(idx) {
+  window.open(GIFTS[idx], '_blank', 'noopener');
+}
+
 var pageBuilt = false;
 function buildPage() {
   if (pageBuilt) return;
   pageBuilt = true;
   const grid = document.getElementById('grid-all');
   ALL_GAMES.forEach(g => grid.appendChild(makeCard(g)));
-  new QRCode(document.getElementById('gift-qr-1'), {text:GIFTS[0], width:150, height:150, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
-  new QRCode(document.getElementById('gift-qr-2'), {text:GIFTS[1], width:150, height:150, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
+  new QRCode(document.getElementById('gift-qr-1'), {text:GIFTS[0], width:140, height:140, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
+  new QRCode(document.getElementById('gift-qr-2'), {text:GIFTS[1], width:140, height:140, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
 }
 
 // ── SEARCH + FILTER ──
@@ -993,10 +1068,11 @@ const ARCADE = (() => {
   function start(id){
     document.getElementById('arc-menu').style.display='none';
     document.getElementById('arc-game').style.display='block';
-    const labels={si:'SPACE INVADERS',bk:'BREAKOUT',sn:'SNAKE',pm:'PAC-MAN'};
+    const labels={si:'SPACE INVADERS',bk:'BREAKOUT',sn:'SNAKE',pm:'PAC-MAN',fb:'FLAPPY BIRD'};
     document.getElementById('arc-game-label').textContent=labels[id]||id;
     document.getElementById('ctrl-row').classList.toggle('active', id==='si'||id==='bk');
     document.getElementById('ctrl-dpad').classList.toggle('active', id==='sn'||id==='pm');
+    document.getElementById('ctrl-flap').classList.toggle('active', id==='fb');
     if(!canvas){
       canvas=document.getElementById('arc-canvas');
       canvas.width=CW; canvas.height=CH;
@@ -1004,7 +1080,7 @@ const ARCADE = (() => {
     }
     if(raf){ cancelAnimationFrame(raf); raf=null; }
     cur=id;
-    const gm={si:GameSI,bk:GameBK,sn:GameSN,pm:GamePM};
+    const gm={si:GameSI,bk:GameBK,sn:GameSN,pm:GamePM,fb:GameFB};
     gm[id].init(canvas,ctx);
     let last=0;
     function loop(ts){
@@ -1020,6 +1096,7 @@ const ARCADE = (() => {
     cur=null;
     document.getElementById('ctrl-row').classList.remove('active');
     document.getElementById('ctrl-dpad').classList.remove('active');
+    document.getElementById('ctrl-flap').classList.remove('active');
     document.getElementById('arc-game').style.display='none';
     document.getElementById('arc-menu').style.display='block';
   }
@@ -1691,6 +1768,164 @@ const GamePM = (() => {
       ctx.fillText('SPACE / CENTER FOR AT STARTE',LW/2,LH/2+44);ctx.shadowBlur=0;
     }
   }
+  return {init,update,draw,stop};
+})();
+
+// ── FLAPPY BIRD ──
+const GameFB = (() => {
+  const LW=640,LH=460;
+  const GRAV=1400, FLAP_V=-440, PIPE_SPD=180, PIPE_GAP=140, PIPE_W=52, PIPE_INTERVAL=1.7;
+  const BIRD_W=52, BIRD_H=52;
+  let canvas,ctx,state='start',score=0,hi=0;
+  let bird,pipes,pipeTimer,listening=false;
+  let flapped=false,birdImg=null;
+  // Birthday pipe emojis for top/bottom decoration
+  const PIPE_DECO=['🎂','🎁','🎀','🎈','⭐'];
+
+  function loadBirdImg(){
+    if(birdImg) return;
+    birdImg=new Image();
+    birdImg.src='379996518_6825102214202545_8322974256973727975_n-removebg-preview.png';
+  }
+
+  function setupInput(){
+    if(listening) return; listening=true;
+    // Keyboard
+    document.addEventListener('keydown',e=>{
+      if(e.code==='Space'||e.code==='ArrowUp'||e.code==='Enter'){
+        e.preventDefault(); handleFlap();
+      }
+    });
+    // Canvas tap
+    const c=document.getElementById('arc-canvas');
+    c.addEventListener('pointerdown',e=>{e.preventDefault();handleFlap();},{passive:false});
+    // Flap button
+    const btn=document.getElementById('mc-flap');
+    if(btn) btn.addEventListener('pointerdown',e=>{e.preventDefault();handleFlap();},{passive:false});
+  }
+
+  function handleFlap(){
+    if(state==='start'||state==='dead') newGame();
+    else if(state==='playing') bird.vy=FLAP_V;
+  }
+
+  function init(c,cx){canvas=c;ctx=cx;loadBirdImg();setupInput();state='start';}
+  function stop(){}
+
+  function newGame(){
+    bird={x:120,y:LH/2,vy:0,rot:0};
+    pipes=[];pipeTimer=0;score=0;
+    state='playing';
+  }
+
+  function spawnPipe(){
+    const minY=80, maxY=LH-80-PIPE_GAP;
+    const gapY=minY+Math.random()*(maxY-minY);
+    const deco=PIPE_DECO[Math.floor(Math.random()*PIPE_DECO.length)];
+    pipes.push({x:LW+PIPE_W, gapY, deco, scored:false});
+  }
+
+  function update(dt){
+    if(state!=='playing') return;
+    // Bird physics
+    bird.vy+=GRAV*dt;
+    bird.y+=bird.vy*dt;
+    bird.rot=Math.max(-30,Math.min(90,bird.vy*0.06));
+    // Ceiling
+    if(bird.y<BIRD_H/2){ bird.y=BIRD_H/2; bird.vy=0; }
+    // Floor
+    if(bird.y>LH-BIRD_H/2){ hi=Math.max(hi,score); state='dead'; return; }
+    // Pipes
+    pipeTimer+=dt;
+    if(pipeTimer>=PIPE_INTERVAL){ pipeTimer=0; spawnPipe(); }
+    pipes=pipes.filter(p=>p.x>-PIPE_W-10);
+    pipes.forEach(p=>{
+      p.x-=PIPE_SPD*dt;
+      // Score
+      if(!p.scored&&p.x+PIPE_W<bird.x){ p.scored=true; score++; sfxCard(); }
+      // Collision
+      const bx=bird.x-BIRD_W/2+8, bw=BIRD_W-16;
+      const by=bird.y-BIRD_H/2+8, bh=BIRD_H-16;
+      const inX=bx+bw>p.x&&bx<p.x+PIPE_W;
+      if(inX&&(by<p.gapY||by+bh>p.gapY+PIPE_GAP)){
+        hi=Math.max(hi,score); state='dead';
+      }
+    });
+  }
+
+  function draw(){
+    // Sky gradient
+    const sky=ctx.createLinearGradient(0,0,0,LH);
+    sky.addColorStop(0,'#1a0a2e'); sky.addColorStop(1,'#0d1b3e');
+    ctx.fillStyle=sky; ctx.fillRect(0,0,LW,LH);
+    // Stars
+    ctx.fillStyle='rgba(255,255,255,.4)';
+    for(let i=0;i<55;i++) ctx.fillRect((i*173+30)%LW,(i*97+15)%LH,i%5===0?2:1,i%5===0?2:1);
+
+    arcHUD(ctx,LW,score,hi,'');
+
+    // Pipes
+    pipes.forEach(p=>{
+      const topH=p.gapY;
+      const botY=p.gapY+PIPE_GAP;
+      const botH=LH-botY;
+      // pipe body
+      const pg=ctx.createLinearGradient(p.x,0,p.x+PIPE_W,0);
+      pg.addColorStop(0,'#7c5af0'); pg.addColorStop(.5,'#9b6fff'); pg.addColorStop(1,'#7c5af0');
+      ctx.fillStyle=pg;
+      // top pipe
+      ctx.fillRect(p.x,0,PIPE_W,topH-14);
+      ctx.fillStyle='#9b6fff';
+      ctx.fillRect(p.x-4,topH-18,PIPE_W+8,18);
+      // bottom pipe
+      ctx.fillStyle=pg;
+      ctx.fillRect(p.x,botY+14,PIPE_W,botH);
+      ctx.fillStyle='#9b6fff';
+      ctx.fillRect(p.x-4,botY,PIPE_W+8,18);
+      // deco emojis
+      arcEM(ctx,p.deco,p.x+PIPE_W/2,topH-28,22);
+      arcEM(ctx,p.deco,p.x+PIPE_W/2,botY+28,22);
+    });
+
+    // Ground
+    ctx.fillStyle='#2a1a5e';
+    ctx.fillRect(0,LH-18,LW,18);
+    ctx.fillStyle='#3d2a7a';
+    ctx.fillRect(0,LH-18,LW,4);
+
+    // Bird
+    ctx.save();
+    ctx.translate(bird.x,bird.y);
+    ctx.rotate(bird.rot*Math.PI/180);
+    if(birdImg&&birdImg.complete&&birdImg.naturalWidth>0){
+      ctx.drawImage(birdImg,-BIRD_W/2,-BIRD_H/2,BIRD_W,BIRD_H);
+    } else {
+      // Fallback circle
+      ctx.fillStyle='#ffd700'; ctx.shadowColor='#ffd700'; ctx.shadowBlur=12;
+      ctx.beginPath(); ctx.arc(0,0,BIRD_W/2-4,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0;
+      arcEM(ctx,'😊',0,0,28);
+    }
+    ctx.restore();
+
+    if(state==='start') drawFBOver('FLAPPY BIRD','#ffd700','TAP / SPACE FOR AT STARTE');
+    if(state==='dead')  drawFBOver('AU DA! 💥','#ff2255',`SCORE: ${score}  HI: ${hi}`);
+    arcScanlines(ctx,LW,LH);
+  }
+
+  function drawFBOver(title,color,sub){
+    ctx.fillStyle='rgba(0,0,0,.78)'; ctx.fillRect(LW/2-190,LH/2-85,380,170);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font=`bold 15px 'Press Start 2P',monospace`;
+    ctx.fillStyle=color; ctx.shadowColor=color; ctx.shadowBlur=20;
+    ctx.fillText(title,LW/2,LH/2-32); ctx.shadowBlur=0;
+    ctx.font=`8px 'Press Start 2P',monospace`; ctx.fillStyle='#aaa';
+    ctx.fillText(sub,LW/2,LH/2+6);
+    if(Math.floor(Date.now()/500)%2){
+      ctx.fillStyle='#ffd700'; ctx.shadowColor='#ffd700'; ctx.shadowBlur=10;
+      ctx.fillText('TAP / SPACE / FLAP FOR AT FLYVE',LW/2,LH/2+44); ctx.shadowBlur=0;
+    }
+  }
+
   return {init,update,draw,stop};
 })();
 </script>
