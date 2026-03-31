@@ -297,6 +297,54 @@
     }
     .gift-scan { font-size:.78rem; color:#b09af0; }
 
+    /* ── SEARCH + FILTER ── */
+    .games-toolbar {
+      display:flex; flex-wrap:wrap; gap:.75rem; align-items:center;
+      margin-bottom:1.5rem;
+    }
+    .search-wrap {
+      flex:1; min-width:180px; position:relative;
+    }
+    .search-wrap input {
+      width:100%; padding:.65rem 1rem .65rem 2.4rem;
+      border-radius:12px; border:1px solid var(--border);
+      background:rgba(255,255,255,.06); color:var(--text);
+      font-size:.9rem; outline:none; transition:border .2s, box-shadow .2s;
+    }
+    .search-wrap input::placeholder { color:var(--muted); }
+    .search-wrap input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(124,90,240,.18); }
+    .search-wrap .search-icon {
+      position:absolute; left:.75rem; top:50%; transform:translateY(-50%);
+      color:var(--muted); font-size:.9rem; pointer-events:none;
+    }
+    .filter-pills { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .pill {
+      padding:.45rem .9rem; border-radius:99px; border:1px solid var(--border);
+      background:none; color:var(--muted); font-size:.8rem; font-weight:600;
+      cursor:pointer; transition:background .15s, color .15s, border-color .15s;
+      white-space:nowrap;
+    }
+    .pill:hover { background:rgba(255,255,255,.07); color:var(--text); }
+    .pill.active {
+      background:var(--accent); border-color:var(--accent); color:#fff;
+    }
+    .pill.esa.active  { background:#7c5af0; border-color:#7c5af0; }
+    .pill.multi.active{ background:#e040fb; border-color:#e040fb; }
+
+    /* ── CATEGORY BADGE ── */
+    .cat-badge {
+      display:inline-block; font-size:.65rem; font-weight:700;
+      padding:.18rem .55rem; border-radius:99px; margin-bottom:.3rem;
+      letter-spacing:.02em;
+    }
+    .cat-badge.esa   { background:rgba(124,90,240,.25); color:#b09af0; }
+    .cat-badge.multi { background:rgba(224,64,251,.2);  color:#e89af0; }
+
+    .no-results {
+      grid-column:1/-1; text-align:center; color:var(--muted);
+      padding:3rem 1rem; font-size:.95rem;
+    }
+
     /* ── MOBILE ── */
     @media(max-width:600px){
       .hero{ padding:2.5rem 1rem 1.5rem; }
@@ -306,6 +354,7 @@
       .games-grid{ grid-template-columns:repeat(2,1fr); gap:.7rem; }
       .personal-video-section{ padding:1.25rem 1rem .5rem; }
       .charity-inner{ flex-direction:column; gap:1rem; }
+      .games-toolbar{ gap:.5rem; }
     }
     @media(max-width:360px){ .games-grid{ grid-template-columns:1fr; } }
 
@@ -362,8 +411,7 @@
   <nav id="tab-bar">
     <div class="tabs">
       <button class="tab-btn active" onclick="showTab('home')">🎉 Forside</button>
-      <button class="tab-btn" onclick="showTab('bundle1')">🏆 ESA Bundle</button>
-      <button class="tab-btn" onclick="showTab('bundle2')">🎮 Multiplayer</button>
+      <button class="tab-btn" onclick="showTab('games')">🎮 Alle spil</button>
       <button class="tab-btn" onclick="showTab('goodcause')">💚 God sag</button>
       <button class="tab-btn" onclick="showTab('gifts')">🎁 Dine gavelinks</button>
     </div>
@@ -393,27 +441,26 @@
     </div>
   </div>
 
-  <!-- TAB: ESA BUNDLE -->
-  <div id="tab-bundle1" class="tab-panel">
-    <div class="section">
-      <div class="section-header">
-        <span class="section-icon">🏆</span>
-        <h2>The ESA All-Star Alliance Bundle</h2>
-        <span class="tag">10 spil</span>
-      </div>
-      <div class="games-grid" id="grid-bundle1"></div>
-    </div>
-  </div>
-
-  <!-- TAB: MULTIPLAYER -->
-  <div id="tab-bundle2" class="tab-panel">
+  <!-- TAB: ALLE SPIL -->
+  <div id="tab-games" class="tab-panel">
     <div class="section">
       <div class="section-header">
         <span class="section-icon">🎮</span>
-        <h2>Multiplayer Madness 2026</h2>
-        <span class="tag">9 spil</span>
+        <h2>Alle spil</h2>
+        <span class="tag" id="games-count">19 spil</span>
       </div>
-      <div class="games-grid" id="grid-bundle2"></div>
+      <div class="games-toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Søg efter spil…" oninput="filterGames()" />
+        </div>
+        <div class="filter-pills">
+          <button class="pill active" data-filter="all"    onclick="setFilter('all')">Alle</button>
+          <button class="pill esa"    data-filter="esa"    onclick="setFilter('esa')">🏆 ESA Bundle</button>
+          <button class="pill multi"  data-filter="multi"  onclick="setFilter('multi')">🎮 Multiplayer</button>
+        </div>
+      </div>
+      <div class="games-grid" id="grid-all"></div>
     </div>
   </div>
 
@@ -504,7 +551,7 @@ function showTab(id) {
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + id).classList.add('active');
-  const idx = ['home','bundle1','bundle2','goodcause','gifts'].indexOf(id);
+  const idx = ['home','games','goodcause','gifts'].indexOf(id);
   document.querySelectorAll('.tab-btn')[idx].classList.add('active');
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -608,29 +655,28 @@ function sfxCard() {
 function sfxClose() { playTone(300,'sine',.12,.1,0); }
 
 // ── GAME DATA ──
-const BUNDLE1 = [
-  {name:"Pentiment",                     rating:"96% positiv",   vid:"JBDu1ZR8WpI"},
-  {name:"Mafia: Definitive Edition",     rating:"86% positiv",   vid:"s2lGEhSlOTY"},
-  {name:"Mafia II: Definitive Edition",  rating:"75% positiv",   vid:"wHoqwphzhzc"},
-  {name:"Mafia III: Definitive Edition", rating:"60% positiv",   vid:"vfwfA_iTOng"},
-  {name:"Horizon Chase 2",               rating:"4.7/5 Epic",    vid:"Lo_FUJmovvM", epic:true},
-  {name:"Tetris Forever",                rating:"73% positiv",   vid:"PO9OIYaKtoo"},
-  {name:"Far Cry® Primal",               rating:"85% positiv",   vid:"LJ2iH57Fs3M"},
-  {name:"Dishonored 2",                  rating:"86% positiv",   vid:"EmsUagvwvbc"},
-  {name:"State of Decay 2: Juggernaut",  rating:"80% positiv",   vid:"aVC3k95LnR0"},
-  {name:"Harry Potter: Quidditch Champions", rating:"73% positiv", vid:"ANTaV7sPWM8"},
+const ALL_GAMES = [
+  {name:"Pentiment",                        rating:"96% positiv",        vid:"JBDu1ZR8WpI", bundle:"esa"},
+  {name:"Mafia: Definitive Edition",        rating:"86% positiv",        vid:"s2lGEhSlOTY", bundle:"esa"},
+  {name:"Mafia II: Definitive Edition",     rating:"75% positiv",        vid:"wHoqwphzhzc", bundle:"esa"},
+  {name:"Mafia III: Definitive Edition",    rating:"60% positiv",        vid:"vfwfA_iTOng", bundle:"esa"},
+  {name:"Horizon Chase 2",                  rating:"4.7/5 Epic",         vid:"Lo_FUJmovvM", bundle:"esa", epic:true},
+  {name:"Tetris Forever",                   rating:"73% positiv",        vid:"PO9OIYaKtoo", bundle:"esa"},
+  {name:"Far Cry® Primal",                  rating:"85% positiv",        vid:"LJ2iH57Fs3M", bundle:"esa"},
+  {name:"Dishonored 2",                     rating:"86% positiv",        vid:"EmsUagvwvbc", bundle:"esa"},
+  {name:"State of Decay 2: Juggernaut",     rating:"80% positiv",        vid:"aVC3k95LnR0", bundle:"esa"},
+  {name:"Harry Potter: Quidditch Champions",rating:"73% positiv",        vid:"ANTaV7sPWM8", bundle:"esa"},
+  {name:"Shotgun Farmers",                  rating:"Multiplayer shooter", vid:"s-XcniIe3zk", bundle:"multi"},
+  {name:"Phantom Squad",                    rating:"Co-op taktisk",       vid:"dybGgP8gZY4", bundle:"multi"},
+  {name:"Fish Stick Protocol",              rating:"8-spiller co-op",     vid:"F4pda3iBnXM", bundle:"multi"},
+  {name:"Rungore",                          rating:"Co-op card battler",  vid:"iEJY7i7mj6I", bundle:"multi"},
+  {name:"Retail Company Simulator",         rating:"Co-op butikssim",     vid:"Nwxeqo5azfk", bundle:"multi"},
+  {name:"Clone Drone in the Danger Zone",   rating:"Robot slice-em-up",   vid:"RvCW59eScik", bundle:"multi"},
+  {name:"Keep Talking and Nobody Explodes", rating:"Party co-op",         vid:"1-MM1UTtjyU", bundle:"multi"},
+  {name:"Party Club",                       rating:"4-spiller party",     vid:"b6k27tYqtLI", bundle:"multi"},
+  {name:"Bogos Binted",                     rating:"4-spiller party",     vid:"DTymBW4QMJM", bundle:"multi"},
 ];
-const BUNDLE2 = [
-  {name:"Shotgun Farmers",               rating:"Multiplayer shooter", vid:"s-XcniIe3zk"},
-  {name:"Phantom Squad",                 rating:"Co-op taktisk",       vid:"dybGgP8gZY4"},
-  {name:"Fish Stick Protocol",           rating:"8-spiller co-op",     vid:"F4pda3iBnXM"},
-  {name:"Rungore",                       rating:"Co-op card battler",  vid:"iEJY7i7mj6I"},
-  {name:"Retail Company Simulator",      rating:"Co-op butikssim",     vid:"Nwxeqo5azfk"},
-  {name:"Clone Drone in the Danger Zone",rating:"Robot slice-em-up",   vid:"RvCW59eScik"},
-  {name:"Keep Talking and Nobody Explodes",rating:"Party co-op",       vid:"1-MM1UTtjyU"},
-  {name:"Party Club",                    rating:"4-spiller party",     vid:"b6k27tYqtLI"},
-  {name:"Bogos Binted",                  rating:"4-spiller party",     vid:"DTymBW4QMJM"},
-];
+const BUNDLE_LABELS = { esa:"🏆 ESA Bundle", multi:"🎮 Multiplayer" };
 
 const GIFTS = [
   atob("aHR0cHM6Ly93d3cuaHVtYmxlYnVuZGxlLmNvbS8/Z2lmdD13UHNteVlYUGt3TUszUDhS"),
@@ -638,10 +684,11 @@ const GIFTS = [
 ];
 
 // ── BUILD CARDS ──
-function makeCard(g, containerId) {
-  const grid = document.getElementById(containerId);
+function makeCard(g) {
   const card = document.createElement('div');
   card.className = 'game-card';
+  card.dataset.bundle = g.bundle;
+  card.dataset.name   = g.name.toLowerCase();
   card.onclick = () => openModal(g.vid, g.name);
   card.innerHTML = `
     <div class="thumb-wrap">
@@ -649,21 +696,52 @@ function makeCard(g, containerId) {
       <div class="play-btn"><div class="play-circle">▶</div></div>
     </div>
     <div class="card-info">
+      <span class="cat-badge ${g.bundle}">${BUNDLE_LABELS[g.bundle]}</span>
       <div class="game-name" title="${g.name}">${g.name}</div>
       <div class="rating"><span class="${g.epic?'epic':'pct'}">${g.rating}</span></div>
       <div class="watch-hint">▶ Se trailer</div>
     </div>`;
-  grid.appendChild(card);
+  return card;
 }
 
 var pageBuilt = false;
 function buildPage() {
   if (pageBuilt) return;
   pageBuilt = true;
-  BUNDLE1.forEach(g => makeCard(g,'grid-bundle1'));
-  BUNDLE2.forEach(g => makeCard(g,'grid-bundle2'));
+  const grid = document.getElementById('grid-all');
+  ALL_GAMES.forEach(g => grid.appendChild(makeCard(g)));
   new QRCode(document.getElementById('gift-qr-1'), {text:GIFTS[0], width:150, height:150, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
   new QRCode(document.getElementById('gift-qr-2'), {text:GIFTS[1], width:150, height:150, colorDark:"#000", colorLight:"#fff", correctLevel:QRCode.CorrectLevel.M});
+}
+
+// ── SEARCH + FILTER ──
+var activeFilter = 'all';
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.pill').forEach(p => p.classList.toggle('active', p.dataset.filter === f));
+  filterGames();
+}
+function filterGames() {
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  let visible = 0;
+  document.querySelectorAll('#grid-all .game-card').forEach(card => {
+    const matchFilter = activeFilter === 'all' || card.dataset.bundle === activeFilter;
+    const matchSearch = card.dataset.name.includes(q);
+    const show = matchFilter && matchSearch;
+    card.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  // update count badge
+  document.getElementById('games-count').textContent = visible + ' spil';
+  // no-results message
+  let noRes = document.getElementById('no-results');
+  if (!noRes) {
+    noRes = document.createElement('div');
+    noRes.id = 'no-results'; noRes.className = 'no-results';
+    noRes.textContent = 'Ingen spil matcher din søgning 🕵️';
+    document.getElementById('grid-all').appendChild(noRes);
+  }
+  noRes.style.display = visible === 0 ? '' : 'none';
 }
 
 // ── MODAL (pauses music while playing) ──
