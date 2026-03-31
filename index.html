@@ -1398,6 +1398,11 @@ function openEnvelope() {
     env.classList.add('opened');
     hint.textContent = '💜';
     sfxCard();
+    // Scroll to video section after animation
+    setTimeout(() => {
+      const vid = document.getElementById('personal-video-container');
+      if (vid) vid.scrollIntoView({behavior:'smooth', block:'center'});
+    }, 700);
   }
 }
 
