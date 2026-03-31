@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tillykke Elisabeth 🎂</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <style>
     :root {
-      --bg: #0d0f1a;
+      --bg: #0b0d1a;
       --card: rgba(255,255,255,0.05);
       --border: rgba(255,255,255,0.10);
       --accent: #7c5af0;
@@ -17,6 +18,7 @@
       --muted: #888;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Segoe UI', system-ui, sans-serif;
@@ -26,107 +28,178 @@
       overflow-x: hidden;
     }
 
-    /* ── STARS ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0;
-      background-image:
-        radial-gradient(1px 1px at 20% 30%, #fff8 0%, transparent 100%),
-        radial-gradient(1px 1px at 80% 10%, #fff6 0%, transparent 100%),
-        radial-gradient(1px 1px at 50% 60%, #fff5 0%, transparent 100%),
-        radial-gradient(1px 1px at 10% 80%, #fff7 0%, transparent 100%),
-        radial-gradient(1px 1px at 90% 70%, #fff4 0%, transparent 100%),
-        radial-gradient(1px 1px at 35% 90%, #fff6 0%, transparent 100%),
-        radial-gradient(1px 1px at 65% 45%, #fff5 0%, transparent 100%);
-      pointer-events: none;
+    /* ── FLOATING PARTICLES ── */
+    #particles {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      font-size: 1.4rem;
+      animation: floatUp linear infinite;
+      opacity: 0;
+      user-select: none;
+    }
+    @keyframes floatUp {
+      0%   { transform: translateY(110vh) rotate(0deg);  opacity: 0; }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.5; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
     }
 
     /* ── PASSWORD SCREEN ── */
     #lock-screen {
-      position: fixed; inset: 0; z-index: 100;
+      position: fixed; inset: 0; z-index: 200;
       display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #0d0f1a 0%, #1a0d2e 100%);
+      background: radial-gradient(ellipse at 50% 50%, #1a0d2e 0%, #0b0d1a 100%);
     }
     .lock-box {
       text-align: center;
       padding: 3rem 2.5rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(124,90,240,0.3);
+      border-radius: 28px;
       backdrop-filter: blur(20px);
-      max-width: 400px; width: 90%;
+      max-width: 420px; width: 92%;
+      box-shadow: 0 0 60px rgba(124,90,240,0.15), 0 0 120px rgba(224,64,251,0.08);
+      animation: lockPulse 3s ease-in-out infinite;
     }
-    .lock-icon { font-size: 4rem; margin-bottom: 1rem; }
-    .lock-box h2 { font-size: 1.6rem; margin-bottom: 0.5rem; }
-    .lock-box p { color: var(--muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
+    @keyframes lockPulse {
+      0%,100% { box-shadow: 0 0 60px rgba(124,90,240,0.15), 0 0 120px rgba(224,64,251,0.08); }
+      50%      { box-shadow: 0 0 80px rgba(124,90,240,0.25), 0 0 140px rgba(224,64,251,0.15); }
+    }
+    .lock-icon {
+      font-size: 4rem; margin-bottom: 0.75rem;
+      display: block;
+      animation: bounce 2s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .lock-box h2 { font-size: 1.7rem; margin-bottom: 0.5rem; }
+    .lock-box p  { color: var(--muted); margin-bottom: 1.75rem; font-size: 0.95rem; line-height: 1.5; }
     .lock-box input {
-      width: 100%; padding: 0.85rem 1.2rem;
-      border-radius: 12px; border: 1px solid var(--border);
-      background: rgba(255,255,255,0.08);
+      width: 100%; padding: 0.9rem 1.2rem;
+      border-radius: 14px; border: 1px solid rgba(124,90,240,0.3);
+      background: rgba(255,255,255,0.07);
       color: var(--text); font-size: 1.1rem;
-      text-align: center; letter-spacing: 0.2em;
-      outline: none; transition: border 0.2s;
+      text-align: center; letter-spacing: 0.15em;
+      outline: none; transition: border 0.25s, box-shadow 0.25s;
     }
-    .lock-box input:focus { border-color: var(--accent); }
+    .lock-box input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(124,90,240,0.2);
+    }
     .lock-box button {
       margin-top: 1rem; width: 100%;
-      padding: 0.85rem; border-radius: 12px;
+      padding: 0.9rem; border-radius: 14px;
       border: none; cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #fff; font-size: 1rem; font-weight: 600;
-      transition: opacity 0.2s;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #fff; font-size: 1.05rem; font-weight: 700;
+      transition: transform 0.15s, opacity 0.15s;
+      letter-spacing: 0.03em;
     }
-    .lock-box button:hover { opacity: 0.85; }
-    .lock-error {
-      margin-top: 0.75rem; color: #ff6b6b;
-      font-size: 0.9rem; min-height: 1.2em;
-    }
+    .lock-box button:hover  { opacity: 0.9; transform: scale(1.02); }
+    .lock-box button:active { transform: scale(0.98); }
+    .lock-error { margin-top: 0.75rem; color: #ff6b6b; font-size: 0.9rem; min-height: 1.2em; }
 
     /* ── MAIN ── */
     #main { display: none; position: relative; z-index: 1; }
 
     /* ── HERO ── */
     .hero {
-      text-align: center; padding: 5rem 1.5rem 3rem;
-      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,90,240,0.25) 0%, transparent 70%);
+      text-align: center;
+      padding: 4rem 1.5rem 2.5rem;
+      background: radial-gradient(ellipse 100% 70% at 50% 0%, rgba(124,90,240,0.3) 0%, transparent 70%);
+      position: relative;
     }
-    .hero .cake { font-size: 4rem; display: block; margin-bottom: 0.5rem; }
+    .hero-emoji {
+      font-size: 3.5rem; display: block; margin-bottom: 0.5rem;
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin {
+      0%   { transform: rotate(-5deg) scale(1); }
+      25%  { transform: rotate(5deg) scale(1.1); }
+      50%  { transform: rotate(-5deg) scale(1); }
+      75%  { transform: rotate(5deg) scale(1.05); }
+      100% { transform: rotate(-5deg) scale(1); }
+    }
     .hero h1 {
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      font-weight: 800;
-      background: linear-gradient(135deg, #fff 0%, var(--accent2) 50%, var(--gold) 100%);
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, #c0a0ff 30%, var(--accent2) 60%, var(--gold) 100%);
+      background-size: 200% auto;
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
+      animation: shimmer 4s linear infinite;
       line-height: 1.2; margin-bottom: 0.75rem;
     }
-    .hero p {
-      color: var(--muted); font-size: 1.1rem; max-width: 500px; margin: 0 auto;
+    @keyframes shimmer {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
     }
+    .hero p {
+      color: var(--muted); font-size: 1rem;
+      max-width: 520px; margin: 0 auto; line-height: 1.6;
+    }
+
+    /* ── PERSONAL VIDEO ── */
+    .personal-video-section {
+      max-width: 820px; margin: 0 auto;
+      padding: 2rem 1.5rem 1rem;
+    }
+    .video-label {
+      text-align: center; margin-bottom: 1.25rem;
+      font-size: 1.1rem; font-weight: 700; color: var(--gold);
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .personal-video-wrap {
+      position: relative; width: 100%;
+      padding-bottom: 56.25%; /* 16:9 */
+      border-radius: 20px; overflow: hidden;
+      border: 2px solid rgba(255,215,0,0.3);
+      box-shadow: 0 0 40px rgba(255,215,0,0.1);
+    }
+    .personal-video-wrap iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+    .video-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.03);
+      color: var(--muted); gap: 0.75rem;
+      font-size: 0.9rem; text-align: center; padding: 2rem;
+    }
+    .video-placeholder .ph-icon { font-size: 3rem; }
 
     /* ── SECTION ── */
     .section {
-      max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem;
+      max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem;
     }
     .section-header {
       display: flex; align-items: center; gap: 1rem;
-      margin-bottom: 2rem; padding-bottom: 1rem;
+      margin-bottom: 1.75rem; padding-bottom: 1rem;
       border-bottom: 1px solid var(--border);
     }
-    .section-icon { font-size: 2rem; }
-    .section-header h2 { font-size: 1.6rem; font-weight: 700; }
+    .section-icon { font-size: 1.8rem; }
+    .section-header h2 { font-size: 1.5rem; font-weight: 700; }
     .section-header .tag {
       margin-left: auto;
       background: rgba(124,90,240,0.2);
       border: 1px solid rgba(124,90,240,0.4);
-      padding: 0.3rem 0.8rem; border-radius: 99px;
-      font-size: 0.8rem; color: #b09af0;
+      padding: 0.25rem 0.75rem; border-radius: 99px;
+      font-size: 0.8rem; color: #b09af0; white-space: nowrap;
     }
 
-    /* ── GRID ── */
+    /* ── GAMES GRID ── */
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 1.1rem;
     }
 
     /* ── GAME CARD ── */
@@ -134,103 +207,206 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 1.25rem;
-      text-align: center;
+      overflow: hidden;
+      cursor: pointer;
       transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-      cursor: default;
+      position: relative;
     }
     .game-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(124,90,240,0.5);
-      box-shadow: 0 8px 32px rgba(124,90,240,0.15);
+      transform: translateY(-5px) scale(1.02);
+      border-color: rgba(124,90,240,0.6);
+      box-shadow: 0 12px 40px rgba(124,90,240,0.2);
+    }
+    .thumb-wrap {
+      position: relative; width: 100%; padding-bottom: 56.25%;
+      background: #111;
+    }
+    .thumb-wrap img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      transition: filter 0.2s;
+    }
+    .game-card:hover .thumb-wrap img { filter: brightness(0.7); }
+    .play-btn {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.2s;
+    }
+    .game-card:hover .play-btn { opacity: 1; }
+    .play-circle {
+      width: 48px; height: 48px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      transform: scale(0.8);
+      transition: transform 0.2s;
+    }
+    .game-card:hover .play-circle { transform: scale(1); }
+    .card-info {
+      padding: 0.75rem 0.85rem;
     }
     .game-name {
-      font-weight: 700; font-size: 0.95rem;
-      margin-bottom: 0.4rem; line-height: 1.3;
+      font-weight: 700; font-size: 0.88rem;
+      margin-bottom: 0.25rem; line-height: 1.3;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .rating {
-      font-size: 0.75rem; color: var(--muted);
-      margin-bottom: 0.9rem;
+      font-size: 0.73rem; color: var(--muted);
     }
-    .rating .pct { color: #7ddf7d; font-weight: 600; }
+    .rating .pct  { color: #7ddf7d; font-weight: 600; }
     .rating .epic { color: var(--gold); font-weight: 600; }
-    .qr-wrap {
-      display: flex; align-items: center; justify-content: center;
-      background: #fff; border-radius: 10px;
-      padding: 8px; margin-bottom: 0.6rem;
+    .watch-hint {
+      font-size: 0.7rem; color: #7c5af0; margin-top: 0.3rem;
+      display: flex; align-items: center; gap: 0.25rem;
     }
-    .qr-wrap canvas, .qr-wrap img { display: block; }
-    .scan-hint {
-      font-size: 0.7rem; color: var(--muted);
-      display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+
+    /* ── VIDEO MODAL ── */
+    #modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    #modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #12141f;
+      border: 1px solid rgba(124,90,240,0.4);
+      border-radius: 20px;
+      overflow: hidden;
+      width: 100%; max-width: 860px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title { font-weight: 700; font-size: 1rem; }
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); font-size: 1.5rem; line-height: 1;
+      padding: 0.2rem 0.5rem; border-radius: 8px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .modal-close:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .modal-video {
+      position: relative; width: 100%; padding-bottom: 56.25%;
+    }
+    .modal-video iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; border: none;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      max-width: 1200px; margin: 0 auto;
+      border: none; border-top: 1px solid var(--border);
     }
 
     /* ── GIFT SECTION ── */
     .gift-section {
-      max-width: 900px; margin: 2rem auto 0;
-      padding: 3rem 1.5rem 5rem;
-      text-align: center;
+      max-width: 700px; margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem; text-align: center;
     }
     .gift-title {
-      font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem;
+      font-size: 1.8rem; font-weight: 800; margin-bottom: 0.4rem;
       background: linear-gradient(135deg, var(--gold), var(--accent2));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .gift-subtitle {
-      color: var(--muted); margin-bottom: 2.5rem; font-size: 1rem;
-    }
+    .gift-subtitle { color: var(--muted); margin-bottom: 2rem; font-size: 0.95rem; }
     .gift-cards {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: 1.5rem; max-width: 600px; margin: 0 auto;
+      gap: 1.25rem;
     }
     @media (max-width: 500px) { .gift-cards { grid-template-columns: 1fr; } }
     .gift-card {
-      background: linear-gradient(135deg, rgba(124,90,240,0.15), rgba(224,64,251,0.10));
-      border: 1px solid rgba(124,90,240,0.5);
-      border-radius: 20px; padding: 1.75rem 1.5rem;
-      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, rgba(124,90,240,0.12), rgba(224,64,251,0.08));
+      border: 1px solid rgba(124,90,240,0.4);
+      border-radius: 20px; padding: 1.5rem 1.25rem;
     }
-    .gift-card::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(circle at 50% 0%, rgba(255,215,0,0.08), transparent 70%);
-    }
-    .gift-card-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    .gift-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
-    .gift-card .sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; }
+    .gift-card-icon { font-size: 2rem; margin-bottom: 0.6rem; }
+    .gift-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .gift-card .sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 1rem; line-height: 1.4; }
     .gift-qr-wrap {
       display: flex; align-items: center; justify-content: center;
-      background: #fff; border-radius: 12px; padding: 10px;
-      margin-bottom: 0.75rem;
+      background: #fff; border-radius: 12px; padding: 8px;
+      margin-bottom: 0.6rem;
     }
-    .gift-qr-wrap canvas, .gift-qr-wrap img { display: block; }
-    .gift-scan { font-size: 0.8rem; color: #b09af0; }
+    .gift-scan { font-size: 0.78rem; color: #b09af0; }
 
-    /* divider */
-    .divider {
-      max-width: 1200px; margin: 0 auto 0;
-      border: none; border-top: 1px solid var(--border);
+    /* ── CHARITY ── */
+    .charity-box {
+      background: linear-gradient(135deg, rgba(0,200,100,0.08), rgba(0,150,80,0.05));
+      border: 1px solid rgba(0,200,100,0.25);
+      border-radius: 18px; padding: 1.75rem;
     }
+    .charity-inner {
+      display: flex; gap: 1.5rem; align-items: flex-start;
+    }
+    .charity-logo {
+      font-size: 3rem; flex-shrink: 0; margin-top: 0.2rem;
+    }
+    .charity-text h3 {
+      font-size: 1.1rem; font-weight: 700; margin-bottom: 0.6rem;
+      color: #7ddf7d;
+    }
+    .charity-text p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+    .charity-text strong { color: var(--text); }
+
+    /* ── HELP GRID ── */
+    .help-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;
+    }
+    @media (max-width: 640px) { .help-grid { grid-template-columns: 1fr; } }
+    .help-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px; padding: 1.5rem;
+      text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: 0.6rem;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .help-card:hover {
+      border-color: rgba(124,90,240,0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(124,90,240,0.15);
+    }
+    .simon-card { cursor: default; }
+    .simon-card:hover { transform: none; box-shadow: none; border-color: rgba(255,215,0,0.3); }
+    .help-icon { font-size: 2.2rem; }
+    .help-card h3 { font-size: 1rem; font-weight: 700; }
+    .help-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.55; flex: 1; }
+    .help-link { font-size: 0.82rem; color: var(--accent); font-weight: 600; }
+    .simon-card .help-link { color: var(--gold); }
+
+    /* ── VIDEO PLACEHOLDER ── */
+    .video-placeholder {
+      background: linear-gradient(135deg, rgba(124,90,240,0.12), rgba(224,64,251,0.08));
+      border: 2px dashed rgba(255,215,0,0.35);
+    }
+    .video-placeholder .ph-icon { font-size: 3.5rem; }
+    .video-placeholder h4 { font-size: 1.05rem; font-weight: 700; color: var(--gold); }
+    .video-placeholder p { font-size: 0.85rem; color: var(--muted); max-width: 280px; }
 
     /* ── MOBILE ── */
     @media (max-width: 600px) {
-      .hero { padding: 3rem 1rem 2rem; }
-      .section { padding: 2rem 1rem; }
-      .section-header h2 { font-size: 1.2rem; }
+      .hero { padding: 2.5rem 1rem 1.5rem; }
+      .section { padding: 1.75rem 1rem; }
+      .section-header h2 { font-size: 1.15rem; }
       .section-header .tag { display: none; }
-      .games-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-      }
-      .game-card { padding: 0.9rem 0.75rem; }
-      .game-name { font-size: 0.82rem; }
-      .qr-wrap { padding: 6px; }
+      .games-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .personal-video-section { padding: 1.5rem 1rem 0.5rem; }
       .gift-section { padding: 2rem 1rem 3rem; }
-      .gift-title { font-size: 1.4rem; }
-      .gift-cards { gap: 1rem; }
-      .gift-card { padding: 1.25rem 1rem; }
-      .gift-card h3 { font-size: 0.9rem; }
     }
     @media (max-width: 360px) {
       .games-grid { grid-template-columns: 1fr; }
@@ -239,12 +415,15 @@
 </head>
 <body>
 
-<!-- ── LOCK SCREEN ── -->
+<!-- PARTICLES -->
+<div id="particles"></div>
+
+<!-- LOCK SCREEN -->
 <div id="lock-screen">
   <div class="lock-box">
-    <div class="lock-icon">🔐</div>
-    <h2>Adgangskode krævet</h2>
-    <p>Dette er en personlig gave — indtast kodeordet for at åbne den.</p>
+    <span class="lock-icon">🎂</span>
+    <h2>Særlig gave til dig</h2>
+    <p>Du har modtaget en personlig fødselsdagsgave. Indtast kodeordet for at åbne den!</p>
     <input type="password" id="pw-input" placeholder="Kodeord" autocomplete="off"
            onkeydown="if(event.key==='Enter') unlock()" />
     <button onclick="unlock()">Åbn gave ✨</button>
@@ -252,22 +431,59 @@
   </div>
 </div>
 
-<!-- ── MAIN CONTENT ── -->
+<!-- VIDEO MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title"></span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-video">
+      <iframe id="modal-iframe" allowfullscreen
+        allow="autoplay; encrypted-media"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
 <div id="main">
 
   <!-- HERO -->
   <div class="hero">
-    <span class="cake">🎂</span>
+    <span class="hero-emoji">🎉</span>
     <h1>Tillykke med fødselsdagen, Elisabeth!</h1>
-    <p>Du har fået ikke ét men <strong>to</strong> Humble Bundle-gavebunker fyldt med spil. Scan en QR-kode for at se traileren — og til sidst finder du dine gavelinks. 🎁</p>
+    <p>Du har fået <strong>to</strong> Humble Bundle-gavebunker med masser af spil — se trailerene herunder og find dine gavelinks til sidst. 🎁</p>
   </div>
+
+  <!-- PERSONAL VIDEO -->
+  <div class="personal-video-section">
+    <div class="video-label">🎬 En personlig besked fra Simon</div>
+    <div class="personal-video-wrap" id="personal-video-container">
+      <!-- Erstat YOUTUBE_VIDEO_ID med dit video-ID efter upload -->
+      <div class="video-placeholder" id="video-placeholder">
+        <span class="ph-icon">🎥</span>
+        <h4>Personlig video fra Simon</h4>
+        <p>En særlig videohilsen til dig — kommer snart!</p>
+      </div>
+      <!-- Fjern kommentaren herunder og indsæt dit YouTube video-ID: -->
+      <!--
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/YOUTUBE_VIDEO_ID?rel=0&modestbranding=1"
+        allowfullscreen
+        allow="autoplay; encrypted-media">
+      </iframe>
+      -->
+    </div>
+  </div>
+
+  <hr class="divider" style="margin: 2rem auto;" />
 
   <!-- BUNDLE 1 -->
   <div class="section">
     <div class="section-header">
       <span class="section-icon">🏆</span>
       <h2>The ESA All-Star Alliance Bundle</h2>
-      <span class="tag">8 spil</span>
+      <span class="tag">10 spil</span>
     </div>
     <div class="games-grid" id="grid-bundle1"></div>
   </div>
@@ -279,9 +495,53 @@
     <div class="section-header">
       <span class="section-icon">🎮</span>
       <h2>Multiplayer Madness 2026</h2>
-      <span class="tag">9+ spil</span>
+      <span class="tag">9 spil</span>
     </div>
     <div class="games-grid" id="grid-bundle2"></div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- CHARITY -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💚</span>
+      <h2>Vi støttede en god sag</h2>
+    </div>
+    <div class="charity-box">
+      <div class="charity-inner">
+        <div class="charity-logo">🤝</div>
+        <div class="charity-text">
+          <h3>Humble Bundle donerer til velgørenhed</h3>
+          <p>En del af pengene fra dit gavekøb går automatisk til velgørende formål. <em>The ESA All-Star Alliance Bundle</em> støtter <strong>ESA Foundation</strong> — en organisation der arbejder for at gøre spilindustrien mere mangfoldig og tilgængelig, bl.a. med stipendier til unge spiludviklere.</p>
+          <p style="margin-top:0.75rem">Så din gave er ikke bare sjov — den gør faktisk verden en smule bedre. 🌍</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- GEFORCE NOW + SIMON HELP -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">☁️</span>
+      <h2>Teknisk hjælp &amp; cloud gaming</h2>
+    </div>
+    <div class="help-grid">
+      <a class="help-card" href="https://www.nvidia.com/da-dk/geforce-now/" target="_blank" rel="noopener">
+        <div class="help-icon">🖥️</div>
+        <h3>NVIDIA GeForce NOW</h3>
+        <p>Kan din PC ikke køre spillene? GeForce NOW streamer dem direkte fra Nvidias kraftige cloud-servere til din skærm — ingen kraftig PC nødvendig. Gratis at starte med!</p>
+        <span class="help-link">Prøv GeForce NOW →</span>
+      </a>
+      <div class="help-card simon-card">
+        <div class="help-icon">🛠️</div>
+        <h3>Simon hjælper</h3>
+        <p>Har du brug for hjælp til at finde en ny PC på et tidspunkt — eller bare til at komme i gang med spillene — så spørg Simon! Han kender til gaming-hardware og finder den bedste løsning til din økonomi og behov.</p>
+        <span class="help-link">Bare spørg! 😊</span>
+      </div>
+    </div>
   </div>
 
   <hr class="divider" />
@@ -289,19 +549,19 @@
   <!-- GIFTS -->
   <div class="gift-section">
     <div class="gift-title">🎁 Dine gavelinks</div>
-    <p class="gift-subtitle">Scan QR-koden for hvert bundle og indløs din gave på Humble Bundle.</p>
+    <p class="gift-subtitle">Scan QR-koden med din telefon og indløs din gave direkte på Humble Bundle.</p>
     <div class="gift-cards">
       <div class="gift-card">
         <div class="gift-card-icon">🏆</div>
         <h3>ESA All-Star Alliance</h3>
-        <p class="sub">Pentiment, Mafia Trilogy, Dishonored 2 og mere</p>
+        <p class="sub">Pentiment, Mafia Trilogy, Dishonored 2, Far Cry Primal og mere</p>
         <div class="gift-qr-wrap" id="gift-qr-1"></div>
         <p class="gift-scan">📱 Scan for at indløse</p>
       </div>
       <div class="gift-card">
         <div class="gift-card-icon">🎮</div>
         <h3>Multiplayer Madness 2026</h3>
-        <p class="sub">Keep Talking, Clone Drone, Party Club og mere</p>
+        <p class="sub">Keep Talking, Clone Drone, Party Club, Bogos Binted og mere</p>
         <div class="gift-qr-wrap" id="gift-qr-2"></div>
         <p class="gift-scan">📱 Scan for at indløse</p>
       </div>
@@ -311,94 +571,141 @@
 </div><!-- end #main -->
 
 <script>
-  // ── PASSWORD ──
-  const PASSWORD = "tillykke";
-  function unlock() {
-    const val = document.getElementById('pw-input').value;
-    if (val.toLowerCase() === PASSWORD) {
-      document.getElementById('lock-screen').style.display = 'none';
-      document.getElementById('main').style.display = 'block';
-      buildPage();
-    } else {
-      document.getElementById('pw-error').textContent = 'Forkert kodeord — prøv igen!';
-      document.getElementById('pw-input').value = '';
-      document.getElementById('pw-input').focus();
-    }
+// ── PASSWORD ──
+const PASSWORD = "tillykke";
+function unlock() {
+  if (document.getElementById('pw-input').value.toLowerCase() === PASSWORD) {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    launchConfetti();
+    buildPage();
+    startParticles();
+  } else {
+    document.getElementById('pw-error').textContent = 'Forkert kodeord — prøv igen! 🙈';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
   }
+}
 
-  // ── GAME DATA ──
-  const BUNDLE1 = [
-    { name: "Pentiment",                   rating: "96% positiv",  url: "https://www.youtube.com/watch?v=JBDu1ZR8WpI" },
-    { name: "Mafia: Definitive Edition",   rating: "86% positiv",  url: "https://www.youtube.com/watch?v=s2lGEhSlOTY" },
-    { name: "Mafia II: Definitive Edition",rating: "75% positiv",  url: "https://www.youtube.com/watch?v=wHoqwphzhzc" },
-    { name: "Mafia III: Definitive Edition",rating:"60% positiv",  url: "https://www.youtube.com/watch?v=vfwfA_iTOng" },
-    { name: "Horizon Chase 2",             rating: "4.7/5 Epic",   url: "https://www.youtube.com/watch?v=Lo_FUJmovvM", epic: true },
-    { name: "Tetris Forever",              rating: "73% positiv",  url: "https://www.youtube.com/watch?v=PO9OIYaKtoo" },
-    { name: "Far Cry® Primal",             rating: "85% positiv",  url: "https://www.youtube.com/watch?v=LJ2iH57Fs3M" },
-    { name: "Dishonored 2",                rating: "86% positiv",  url: "https://www.youtube.com/watch?v=EmsUagvwvbc" },
-    { name: "State of Decay 2: Juggernaut",rating: "80% positiv",  url: "https://www.youtube.com/watch?v=aVC3k95LnR0" },
-    { name: "Harry Potter: Quidditch Champions", rating: "73% positiv", url: "https://www.youtube.com/watch?v=ANTaV7sPWM8" },
-  ];
+// ── CONFETTI BURST ──
+function launchConfetti() {
+  const colors = ['#7c5af0','#e040fb','#ffd700','#ff6b9d','#00d4aa','#ffffff'];
+  const end = Date.now() + 3000;
+  (function frame() {
+    confetti({ particleCount: 6, angle: 60, spread: 55, origin: {x:0}, colors });
+    confetti({ particleCount: 6, angle: 120, spread: 55, origin: {x:1}, colors });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  })();
+  // Center burst
+  setTimeout(() => {
+    confetti({ particleCount: 120, spread: 100, origin: {y: 0.4},
+               colors, scalar: 1.2 });
+  }, 400);
+}
 
-  const BUNDLE2 = [
-    { name: "Shotgun Farmers",             rating: "Multiplayer shooter", url: "https://www.youtube.com/watch?v=s-XcniIe3zk" },
-    { name: "Phantom Squad",               rating: "Co-op taktisk shooter", url: "https://www.youtube.com/watch?v=dybGgP8gZY4" },
-    { name: "Fish Stick Protocol",         rating: "8-spiller co-op",  url: "https://www.youtube.com/watch?v=F4pda3iBnXM" },
-    { name: "Rungore",                     rating: "Co-op card battler", url: "https://www.youtube.com/watch?v=iEJY7i7mj6I" },
-    { name: "Retail Company Simulator",    rating: "Co-op butikssim",  url: "https://www.youtube.com/watch?v=Nwxeqo5azfk" },
-    { name: "Clone Drone in the Danger Zone", rating: "Robot slice-em-up", url: "https://www.youtube.com/watch?v=RvCW59eScik" },
-    { name: "Keep Talking and Nobody Explodes", rating: "Party co-op", url: "https://www.youtube.com/watch?v=1-MM1UTtjyU" },
-    { name: "Party Club",                  rating: "4-spiller party", url: "https://www.youtube.com/watch?v=b6k27tYqtLI" },
-    { name: "Bogos Binted",                rating: "4-spiller party", url: "https://www.youtube.com/watch?v=DTymBW4QMJM" },
-  ];
+// ── FLOATING PARTICLES ──
+const EMOJIS = ['🎂','🎉','🎁','🎈','⭐','✨','🎊','💜','🎮','🏆'];
+function startParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'particle';
+      el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+      el.style.left  = Math.random() * 100 + 'vw';
+      el.style.animationDuration  = (12 + Math.random() * 16) + 's';
+      el.style.animationDelay     = (Math.random() * 8) + 's';
+      el.style.fontSize = (1 + Math.random() * 1.2) + 'rem';
+      container.appendChild(el);
+    }, i * 200);
+  }
+}
 
-  // Humble Bundle gift links (base64 for light obfuscation)
-  const GIFTS = [
-    atob("aHR0cHM6Ly93d3cuaHVtYmxlYnVuZGxlLmNvbS8/Z2lmdD13UHNteVlYUGt3TUszUDhS"),
-    atob("aHR0cHM6Ly93d3cuaHVtYmxlYnVuZGxlLmNvbS8/Z2lmdD12ZURQeFVBbjduVkNjVnJh"),
-  ];
+// ── GAME DATA ──
+const BUNDLE1 = [
+  { name:"Pentiment",                    rating:"96% positiv",   vid:"JBDu1ZR8WpI" },
+  { name:"Mafia: Definitive Edition",    rating:"86% positiv",   vid:"s2lGEhSlOTY" },
+  { name:"Mafia II: Definitive Edition", rating:"75% positiv",   vid:"wHoqwphzhzc" },
+  { name:"Mafia III: Definitive Edition",rating:"60% positiv",   vid:"vfwfA_iTOng" },
+  { name:"Horizon Chase 2",              rating:"4.7/5 Epic",    vid:"Lo_FUJmovvM", epic:true },
+  { name:"Tetris Forever",               rating:"73% positiv",   vid:"PO9OIYaKtoo" },
+  { name:"Far Cry® Primal",              rating:"85% positiv",   vid:"LJ2iH57Fs3M" },
+  { name:"Dishonored 2",                 rating:"86% positiv",   vid:"EmsUagvwvbc" },
+  { name:"State of Decay 2: Juggernaut", rating:"80% positiv",   vid:"aVC3k95LnR0" },
+  { name:"Harry Potter: Quidditch Champions", rating:"73% positiv", vid:"ANTaV7sPWM8" },
+];
+const BUNDLE2 = [
+  { name:"Shotgun Farmers",              rating:"Multiplayer shooter", vid:"s-XcniIe3zk" },
+  { name:"Phantom Squad",                rating:"Co-op taktisk",       vid:"dybGgP8gZY4" },
+  { name:"Fish Stick Protocol",          rating:"8-spiller co-op",     vid:"F4pda3iBnXM" },
+  { name:"Rungore",                      rating:"Co-op card battler",  vid:"iEJY7i7mj6I" },
+  { name:"Retail Company Simulator",     rating:"Co-op butikssim",     vid:"Nwxeqo5azfk" },
+  { name:"Clone Drone in the Danger Zone",rating:"Robot slice-em-up", vid:"RvCW59eScik" },
+  { name:"Keep Talking and Nobody Explodes",rating:"Party co-op",     vid:"1-MM1UTtjyU" },
+  { name:"Party Club",                   rating:"4-spiller party",     vid:"b6k27tYqtLI" },
+  { name:"Bogos Binted",                 rating:"4-spiller party",     vid:"DTymBW4QMJM" },
+];
 
-  // ── BUILD PAGE ──
-  function makeCard(game, containerId) {
-    const grid = document.getElementById(containerId);
-    const card = document.createElement('div');
-    card.className = 'game-card';
+// Gift links (base64 obfuscated)
+const GIFTS = [
+  atob("aHR0cHM6Ly93d3cuaHVtYmxlYnVuZGxlLmNvbS8/Z2lmdD13UHNteVlYUGt3TUszUDhS"),
+  atob("aHR0cHM6Ly93d3cuaHVtYmxlYnVuZGxlLmNvbS8/Z2lmdD12ZURQeFVBbjduVkNjVnJh"),
+];
 
-    const ratingClass = game.epic ? 'epic' : 'pct';
-    card.innerHTML = `
-      <div class="game-name">${game.name}</div>
+// ── BUILD CARDS ──
+function makeCard(game, containerId) {
+  const grid = document.getElementById(containerId);
+  const card = document.createElement('div');
+  card.className = 'game-card';
+  card.onclick = () => openModal(game.vid, game.name);
+
+  const thumb = `https://img.youtube.com/vi/${game.vid}/mqdefault.jpg`;
+  const ratingClass = game.epic ? 'epic' : 'pct';
+  card.innerHTML = `
+    <div class="thumb-wrap">
+      <img src="${thumb}" alt="${game.name}" loading="lazy" />
+      <div class="play-btn"><div class="play-circle">▶</div></div>
+    </div>
+    <div class="card-info">
+      <div class="game-name" title="${game.name}">${game.name}</div>
       <div class="rating"><span class="${ratingClass}">${game.rating}</span></div>
-      <div class="qr-wrap" id="qr-${containerId}-${Math.random().toString(36).slice(2)}"></div>
-      <div class="scan-hint">📱 Scan for trailer</div>
-    `;
-    grid.appendChild(card);
+      <div class="watch-hint">▶ Se trailer</div>
+    </div>`;
+  grid.appendChild(card);
+}
 
-    const qrDiv = card.querySelector('.qr-wrap');
-    new QRCode(qrDiv, {
-      text: game.url,
-      width: 140, height: 140,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.M,
-    });
-  }
+function buildPage() {
+  BUNDLE1.forEach(g => makeCard(g, 'grid-bundle1'));
+  BUNDLE2.forEach(g => makeCard(g, 'grid-bundle2'));
 
-  function buildPage() {
-    BUNDLE1.forEach(g => makeCard(g, 'grid-bundle1'));
-    BUNDLE2.forEach(g => makeCard(g, 'grid-bundle2'));
+  new QRCode(document.getElementById('gift-qr-1'), {
+    text: GIFTS[0], width: 150, height: 150,
+    colorDark:"#000", colorLight:"#fff",
+    correctLevel: QRCode.CorrectLevel.M,
+  });
+  new QRCode(document.getElementById('gift-qr-2'), {
+    text: GIFTS[1], width: 150, height: 150,
+    colorDark:"#000", colorLight:"#fff",
+    correctLevel: QRCode.CorrectLevel.M,
+  });
+}
 
-    // Gift QR codes
-    new QRCode(document.getElementById('gift-qr-1'), {
-      text: GIFTS[0], width: 160, height: 160,
-      colorDark: "#000", colorLight: "#fff",
-      correctLevel: QRCode.CorrectLevel.M,
-    });
-    new QRCode(document.getElementById('gift-qr-2'), {
-      text: GIFTS[1], width: 160, height: 160,
-      colorDark: "#000", colorLight: "#fff",
-      correctLevel: QRCode.CorrectLevel.M,
-    });
-  }
+// ── MODAL ──
+function openModal(vid, title) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-iframe').src =
+    `https://www.youtube-nocookie.com/embed/${vid}?autoplay=1&rel=0&modestbranding=1`;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay') &&
+      !e.target.classList.contains('modal-close')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.getElementById('modal-iframe').src = '';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal({}); });
 </script>
 </body>
 </html>
