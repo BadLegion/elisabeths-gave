@@ -1496,37 +1496,23 @@ function closeEnvelope() {
 }
 
 // ── VIDEO MODAL ──
-const LOOM_ID = '3a015ea5-8357-4bf6-8d99-61bef4dc6f19';
-const YOUTUBE_ID = ''; // Sæt YouTube-ID her hvis I uploader til YouTube
+const VIDEO_FILE = '3a015ea5-8357-4bf6-8d99-61bef4dc6f19.mp4';
 function openVideoModal() {
   const modal = document.getElementById('video-modal');
   const inner = document.getElementById('video-modal-inner');
-  if (YOUTUBE_ID) {
-    // YouTube virker altid som embed
-    inner.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0&modestbranding=1"
-      allowfullscreen allow="autoplay; encrypted-media"
-      style="position:absolute;inset:0;width:100%;height:100%;border:none;border-radius:14px;"></iframe>`;
-  } else if (LOOM_ID) {
-    // Loom blokerer embed — vis en stor knap der åbner i ny fane
-    inner.innerHTML = `
-      <span style="font-size:3.5rem">🎬</span>
-      <h4 style="color:var(--gold);margin:0;font-size:1.1rem;text-align:center">En personlig hilsen venter dig!</h4>
-      <p style="color:var(--muted);font-size:.85rem;margin:0;text-align:center">Klik på knappen for at se videoen</p>
-      <a href="https://www.loom.com/share/${LOOM_ID}" target="_blank" rel="noopener"
-         style="margin-top:.5rem;padding:.75rem 2rem;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:700;font-size:1rem;letter-spacing:.05em;display:inline-block;">
-        ▶ Se video
-      </a>`;
-  }
+  inner.innerHTML = `<video src="${VIDEO_FILE}" autoplay controls playsinline
+    style="position:absolute;inset:0;width:100%;height:100%;border-radius:14px;background:#000;"></video>`;
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
 }
+
 function closeVideoModal(e) {
   if (e && e.target !== document.getElementById('video-modal')) return;
   const modal = document.getElementById('video-modal');
   const inner = document.getElementById('video-modal-inner');
   modal.style.display = 'none';
   document.body.style.overflow = '';
-  if (LOOM_ID) inner.innerHTML = '';
+  inner.innerHTML = '';
   // Close envelope again after modal closes
   closeEnvelope();
 }
