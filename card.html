@@ -10,9 +10,9 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #e8e8e8;
-      display: flex; align-items: center; justify-content: center;
-      min-height: 100vh;
+      background: #d8d8d8;
+      display: flex; align-items: flex-start; justify-content: center;
+      min-height: 100vh; padding: 10mm 0;
       font-family: 'Lato', sans-serif;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -24,25 +24,53 @@
       min-height: 297mm;
       background: #fff;
       position: relative;
-      padding: 18mm 16mm;
+      padding: 34mm 20mm 18mm;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* Outer border */
+    /* Double border */
     .card::before {
       content: '';
       position: absolute;
       inset: 8mm;
       border: 1.5px solid #111;
     }
-    /* Inner border */
     .card::after {
       content: '';
       position: absolute;
-      inset: 10.5mm;
+      inset: 11mm;
       border: 0.5px solid #111;
+    }
+
+    /* ── BUNTING (top) ── */
+    .bunting-svg {
+      position: absolute;
+      top: 0; left: 0;
+      width: 210mm; height: 30mm;
+      z-index: 3;
+    }
+
+    /* ── BALLOONS (sides) ── */
+    .balloons-l, .balloons-r {
+      position: absolute;
+      top: 24mm;
+      width: 17mm;
+      height: 250mm;
+      z-index: 3;
+    }
+    .balloons-l { left: 0; }
+    .balloons-r { right: 0; }
+
+    /* ── CONFETTI DOTS (scattered across card) ── */
+    .cd {
+      position: absolute;
+      font-size: .5rem;
+      color: #333;
+      z-index: 2;
+      line-height: 1;
+      pointer-events: none;
     }
 
     /* ── CORNER ORNAMENTS ── */
@@ -51,21 +79,14 @@
       font-size: 1.1rem;
       color: #111;
       line-height: 1;
+      z-index: 4;
     }
-    .corner.tl { top: 6mm;  left:  6mm;  }
-    .corner.tr { top: 6mm;  right: 6mm;  }
-    .corner.bl { bottom: 6mm; left:  6mm; }
+    .corner.tl { top: 6mm; left: 6mm; }
+    .corner.tr { top: 6mm; right: 6mm; }
+    .corner.bl { bottom: 6mm; left: 6mm; }
     .corner.br { bottom: 6mm; right: 6mm; }
 
-    /* ── TOP ORNAMENT ── */
-    .top-ornament {
-      font-size: 2.2rem;
-      margin-bottom: 5mm;
-      letter-spacing: .4rem;
-      color: #111;
-    }
-
-    /* ── OCCASION LINE ── */
+    /* ── OCCASION ── */
     .occasion {
       font-family: 'Playfair Display', serif;
       font-style: italic;
@@ -76,19 +97,14 @@
       margin-bottom: 3mm;
     }
 
-    /* ── THIN RULE ── */
-    .rule {
-      width: 55mm;
-      height: 1px;
-      background: linear-gradient(to right, transparent, #111, transparent);
-      margin: 3mm auto;
-    }
+    /* ── RULES ── */
+    .rule { width: 55mm; height: 1px; background: #111; margin: 3mm auto; }
     .rule.wide { width: 120mm; }
 
     /* ── NAME ── */
     .name {
       font-family: 'Playfair Display', serif;
-      font-size: 3.4rem;
+      font-size: 3.6rem;
       font-weight: 700;
       color: #111;
       text-align: center;
@@ -97,7 +113,7 @@
       margin: 4mm 0 2mm;
     }
 
-    /* ── DEAR LINE ── */
+    /* ── DEAR ── */
     .dear {
       font-family: 'Playfair Display', serif;
       font-style: italic;
@@ -111,8 +127,8 @@
     .body-text {
       font-family: 'Lato', sans-serif;
       font-weight: 300;
-      font-size: 1.08rem;
-      line-height: 1.85;
+      font-size: 1.05rem;
+      line-height: 1.9;
       color: #222;
       text-align: center;
       max-width: 140mm;
@@ -125,79 +141,68 @@
       font-family: 'Playfair Display', serif;
       font-style: italic;
       font-weight: 700;
-      font-size: 1.22rem;
+      font-size: 1.18rem;
       color: #111;
       text-align: center;
       margin: 2mm 0 7mm;
     }
 
-    /* ── DIVIDER ORNAMENT ── */
+    /* ── DIVIDER ── */
     .divider {
       display: flex; align-items: center; gap: 4mm;
-      width: 140mm; margin: 0 auto 8mm;
+      width: 140mm; margin: 0 auto 7mm;
       color: #888;
       font-size: .75rem;
       letter-spacing: .25em;
     }
     .divider::before, .divider::after {
-      content: '';
-      flex: 1; height: 1px;
-      background: linear-gradient(to right, transparent, #999, transparent);
+      content: ''; flex: 1; height: 1px; background: #999;
     }
 
-    /* ── QR SECTION ── */
+    /* ── QR ── */
     .qr-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 8mm;
+      display: flex; flex-direction: column; align-items: center;
+      margin-bottom: 5mm;
     }
     .qr-label-top {
       font-family: 'Lato', sans-serif;
-      font-weight: 400;
-      font-size: .78rem;
-      color: #555;
-      letter-spacing: .12em;
-      text-transform: uppercase;
+      font-size: .78rem; color: #555;
+      letter-spacing: .12em; text-transform: uppercase;
       margin-bottom: 4mm;
     }
-    .qr-wrap {
-      border: 1px solid #222;
-      padding: 4mm;
-      background: #fff;
-    }
+    .qr-wrap { border: 1px solid #222; padding: 4mm; background: #fff; }
     .qr-label-bottom {
       margin-top: 3mm;
       font-family: 'Lato', sans-serif;
-      font-size: .72rem;
-      color: #777;
-      letter-spacing: .06em;
-      text-align: center;
+      font-size: .7rem; color: #777;
+      letter-spacing: .06em; text-align: center;
     }
 
     /* ── PASSWORD BOX ── */
     .pw-box {
-      border: 1px dashed #bbb;
-      border-radius: 6px;
-      padding: 4mm 8mm;
-      margin: 5mm 0 5mm;
+      border: 2px solid #111;
+      padding: 4mm 14mm;
+      margin: 4mm 0 6mm;
       text-align: center;
-      background: #f9f9f9;
+      position: relative;
+    }
+    .pw-box::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px dashed #444;
     }
     .pw-label {
       font-family: 'Lato', sans-serif;
-      font-size: .7rem;
-      color: #888;
-      letter-spacing: .14em;
-      text-transform: uppercase;
+      font-size: .72rem; color: #444;
+      letter-spacing: .2em; text-transform: uppercase;
       margin-bottom: 2mm;
     }
     .pw-value {
       font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.4rem;
-      color: #222;
-      letter-spacing: .08em;
+      font-style: italic; font-weight: 700;
+      font-size: 1.7rem; color: #111;
+      letter-spacing: .12em;
     }
 
     /* ── SIGNATURE ── */
@@ -210,36 +215,25 @@
       margin-top: auto;
       padding-top: 6mm;
     }
-    .sig-heart { font-style: normal; }
     .sig-names { font-weight: 700; font-style: normal; }
 
     /* ── PRINT ── */
     @media print {
-      body {
-        background: #fff;
-        margin: 0; padding: 0;
-      }
-      .card {
-        width: 210mm;
-        min-height: 297mm;
-        box-shadow: none;
-        page-break-after: always;
-      }
+      body { background: #fff; padding: 0; }
+      .card { box-shadow: none; page-break-after: always; }
       .print-hint { display: none; }
     }
 
-    /* Screen only */
+    /* ── SCREEN ── */
     @media screen {
-      .card {
-        box-shadow: 0 8px 40px rgba(0,0,0,.25);
-        margin: 10mm;
-      }
+      .card { box-shadow: 0 8px 40px rgba(0,0,0,.25); }
       .print-hint {
-        position: fixed; bottom: 20px; right: 20px;
+        position: fixed; bottom: 18px; right: 18px;
         background: #111; color: #fff;
-        padding: .7rem 1.2rem; border-radius: 10px;
-        font-size: .9rem; font-family: sans-serif;
+        padding: .65rem 1.1rem; border-radius: 10px;
+        font-size: .88rem; font-family: sans-serif;
         box-shadow: 0 4px 16px rgba(0,0,0,.3);
+        cursor: pointer;
       }
     }
   </style>
@@ -247,33 +241,170 @@
 <body>
 
 <div class="card">
-  <!-- Corner ornaments -->
+
+  <!-- ═══════ CORNER ORNAMENTS ═══════ -->
   <div class="corner tl">✦</div>
   <div class="corner tr">✦</div>
   <div class="corner bl">✦</div>
   <div class="corner br">✦</div>
 
-  <!-- Top decorative element -->
-  <div class="top-ornament">❧ ✦ ❧</div>
+  <!-- ═══════ BUNTING / FLAG GARLAND ═══════
+       viewBox 210×28 → matches card width in mm, height 28mm
+       Rope: cubic bezier from left to right with a slight dip
+       Flags: triangles hanging below rope, each with a different B&W fill pattern
+  -->
+  <svg class="bunting-svg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Diagonal hatch / (flag A) -->
+      <pattern id="f1" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="4" stroke="#111" stroke-width="1.5"/>
+      </pattern>
+      <!-- Dots (flag B) -->
+      <pattern id="f2" patternUnits="userSpaceOnUse" width="4" height="4">
+        <circle cx="2" cy="2" r="1" fill="#111"/>
+      </pattern>
+      <!-- Diagonal hatch \ (flag C) -->
+      <pattern id="f3" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(-45)">
+        <line x1="0" y1="0" x2="0" y2="4" stroke="#111" stroke-width="1.5"/>
+      </pattern>
+      <!-- Horizontal lines (flag D) -->
+      <pattern id="f4" patternUnits="userSpaceOnUse" width="4" height="4">
+        <line x1="0" y1="2" x2="4" y2="2" stroke="#111" stroke-width="1.5"/>
+      </pattern>
+      <!-- Cross / grid (flag E) -->
+      <pattern id="f5" patternUnits="userSpaceOnUse" width="5" height="5">
+        <line x1="0" y1="2.5" x2="5" y2="2.5" stroke="#111" stroke-width="0.9"/>
+        <line x1="2.5" y1="0" x2="2.5" y2="5" stroke="#111" stroke-width="0.9"/>
+      </pattern>
+    </defs>
 
+    <!-- Rope (drawn first, behind flags) -->
+    <path d="M0,9 C52,22 158,3 210,15" stroke="#333" stroke-width="1" fill="none"/>
+
+    <!-- Flags: (cx, rope_y) → triangle top = rope_y, tip = rope_y+15, width ±6 -->
+    <!-- Approximate bezier y at each x using t steps -->
+    <!-- x≈10 t≈0.05 y≈10.7  → flag: 4,10.7  16,10.7  10,25.7 -->
+    <polygon points="4,10.7 16,10.7 10,25.7"  fill="#111"       stroke="#111" stroke-width="0.5"/>
+    <!-- x≈30 t≈0.14 y≈13.8 -->
+    <polygon points="24,13.8 36,13.8 30,27"   fill="url(#f1)"   stroke="#111" stroke-width="0.8"/>
+    <!-- x≈50 t≈0.24 y≈16.3 -->
+    <polygon points="44,16.3 56,16.3 50,27"   fill="white"      stroke="#111" stroke-width="1"/>
+    <!-- x≈70 t≈0.33 y≈17.5 -->
+    <polygon points="64,17.5 76,17.5 70,27"   fill="url(#f2)"   stroke="#111" stroke-width="0.8"/>
+    <!-- x≈90 t≈0.43 y≈17.2 -->
+    <polygon points="84,17.2 96,17.2 90,27"   fill="#111"       stroke="#111" stroke-width="0.5"/>
+    <!-- x≈110 t≈0.52 y≈15.4 -->
+    <polygon points="104,15.4 116,15.4 110,27" fill="url(#f3)"  stroke="#111" stroke-width="0.8"/>
+    <!-- x≈130 t≈0.62 y≈12.7 -->
+    <polygon points="124,12.7 136,12.7 130,27" fill="white"     stroke="#111" stroke-width="1"/>
+    <!-- x≈150 t≈0.71 y≈10.5 -->
+    <polygon points="144,10.5 156,10.5 150,27" fill="url(#f4)"  stroke="#111" stroke-width="0.8"/>
+    <!-- x≈170 t≈0.81 y≈10.2 -->
+    <polygon points="164,10.2 176,10.2 170,26" fill="url(#f5)"  stroke="#111" stroke-width="0.8"/>
+    <!-- x≈190 t≈0.90 y≈12.2 -->
+    <polygon points="184,12.2 196,12.2 190,27" fill="url(#f1)"  stroke="#111" stroke-width="0.8"/>
+    <!-- x≈207 t≈0.99 y≈14.8 -->
+    <polygon points="201,14.8 210,14.8 206,27" fill="#111"      stroke="#111" stroke-width="0.5"/>
+  </svg>
+
+  <!-- ═══════ LEFT BALLOONS ═══════
+       viewBox 17×250 mm, 3 balloons with strings
+       Each balloon: ellipse rx=7 ry=8.5, knot triangle, dashed string
+  -->
+  <svg class="balloons-l" viewBox="0 0 17 250" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="bl1" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="4" stroke="#111" stroke-width="1.3"/>
+      </pattern>
+      <pattern id="bl2" patternUnits="userSpaceOnUse" width="4" height="4">
+        <circle cx="2" cy="2" r="0.9" fill="#111"/>
+      </pattern>
+    </defs>
+    <!-- Balloon 1: diagonal hatch -->
+    <ellipse cx="8.5" cy="22" rx="7" ry="8.5" fill="url(#bl1)" stroke="#111" stroke-width="0.9"/>
+    <!-- Highlight glare -->
+    <ellipse cx="6" cy="17" rx="2.2" ry="1.4" fill="white" opacity="0.7"/>
+    <!-- Knot -->
+    <polygon points="7,30.5 10,30.5 8.5,33.5" fill="#111"/>
+    <!-- String -->
+    <path d="M8.5,33.5 Q3,55 8.5,78" stroke="#555" stroke-width="0.7" fill="none" stroke-dasharray="2,2"/>
+
+    <!-- Balloon 2: solid black -->
+    <ellipse cx="8.5" cy="115" rx="7" ry="8.5" fill="#111" stroke="#111" stroke-width="0.9"/>
+    <ellipse cx="6" cy="110" rx="2.2" ry="1.4" fill="white" opacity="0.35"/>
+    <polygon points="7,123.5 10,123.5 8.5,126.5" fill="#111"/>
+    <path d="M8.5,126.5 Q14,148 8.5,170" stroke="#555" stroke-width="0.7" fill="none" stroke-dasharray="2,2"/>
+
+    <!-- Balloon 3: dots -->
+    <ellipse cx="8.5" cy="205" rx="7" ry="8.5" fill="url(#bl2)" stroke="#111" stroke-width="0.9"/>
+    <ellipse cx="6" cy="200" rx="2.2" ry="1.4" fill="white" opacity="0.7"/>
+    <polygon points="7,213.5 10,213.5 8.5,216.5" fill="#111"/>
+  </svg>
+
+  <!-- ═══════ RIGHT BALLOONS ═══════ -->
+  <svg class="balloons-r" viewBox="0 0 17 250" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="br1" patternUnits="userSpaceOnUse" width="5" height="5">
+        <line x1="0" y1="2.5" x2="5" y2="2.5" stroke="#111" stroke-width="0.9"/>
+        <line x1="2.5" y1="0" x2="2.5" y2="5" stroke="#111" stroke-width="0.9"/>
+      </pattern>
+      <pattern id="br2" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(-45)">
+        <line x1="0" y1="0" x2="0" y2="4" stroke="#111" stroke-width="1.3"/>
+      </pattern>
+    </defs>
+    <!-- Balloon 1: outline only (white) -->
+    <ellipse cx="8.5" cy="38" rx="7" ry="8.5" fill="white" stroke="#111" stroke-width="1.1"/>
+    <ellipse cx="6" cy="33" rx="2.2" ry="1.4" fill="#eee" opacity="0.8"/>
+    <polygon points="7,46.5 10,46.5 8.5,49.5" fill="#111"/>
+    <path d="M8.5,49.5 Q14,70 8.5,92" stroke="#555" stroke-width="0.7" fill="none" stroke-dasharray="2,2"/>
+
+    <!-- Balloon 2: grid/cross -->
+    <ellipse cx="8.5" cy="140" rx="7" ry="8.5" fill="url(#br1)" stroke="#111" stroke-width="0.9"/>
+    <ellipse cx="6" cy="135" rx="2.2" ry="1.4" fill="white" opacity="0.6"/>
+    <polygon points="7,148.5 10,148.5 8.5,151.5" fill="#111"/>
+    <path d="M8.5,151.5 Q3,172 8.5,195" stroke="#555" stroke-width="0.7" fill="none" stroke-dasharray="2,2"/>
+
+    <!-- Balloon 3: reverse diagonal -->
+    <ellipse cx="8.5" cy="222" rx="7" ry="8.5" fill="url(#br2)" stroke="#111" stroke-width="0.9"/>
+    <ellipse cx="6" cy="217" rx="2.2" ry="1.4" fill="white" opacity="0.6"/>
+    <polygon points="7,230.5 10,230.5 8.5,233.5" fill="#111"/>
+  </svg>
+
+  <!-- ═══════ CONFETTI / SCATTERED DECORATION ═══════ -->
+  <!-- Left margin area -->
+  <div class="cd" style="top:31mm; left:13mm">✦</div>
+  <div class="cd" style="top:40mm; left:17mm">·</div>
+  <div class="cd" style="top:50mm; left:13mm">★</div>
+  <div class="cd" style="top:65mm; left:16mm">✦</div>
+  <div class="cd" style="top:90mm; left:14mm">·</div>
+  <div class="cd" style="top:110mm; left:17mm">✦</div>
+  <div class="cd" style="top:135mm; left:13mm">★</div>
+  <div class="cd" style="top:160mm; left:16mm">·</div>
+  <div class="cd" style="top:185mm; left:14mm">✦</div>
+  <!-- Right margin area -->
+  <div class="cd" style="top:33mm; right:13mm">✦</div>
+  <div class="cd" style="top:44mm; right:17mm">★</div>
+  <div class="cd" style="top:57mm; right:14mm">·</div>
+  <div class="cd" style="top:75mm; right:16mm">✦</div>
+  <div class="cd" style="top:100mm; right:14mm">★</div>
+  <div class="cd" style="top:120mm; right:17mm">·</div>
+  <div class="cd" style="top:145mm; right:13mm">✦</div>
+  <div class="cd" style="top:170mm; right:16mm">★</div>
+  <div class="cd" style="top:195mm; right:14mm">·</div>
+
+  <!-- ═══════ CONTENT ═══════ -->
   <div class="occasion">Tillykke med de 28 år</div>
-
   <div class="rule wide"></div>
-
   <div class="name">Elisabeth</div>
-
   <div class="rule"></div>
-
   <div class="dear">Kære Elisabeth,</div>
 
   <div class="body-text">
     <p>Stort tillykke med fødselsdagen.</p>
-    <p>Vi håber du får en fantastisk fødselsdag.</p>
+    <p>Vi håber du får en helt fantastisk dag<br>fuld af glæde, kærlighed og gode minder.</p>
   </div>
 
-  <div class="special">
-    Du er den bedste af de bedste — og endnu bedre.
-  </div>
+  <div class="special">Du er den bedste af de bedste — og endnu bedre.</div>
 
   <div class="divider">✦ &nbsp; din gave venter &nbsp; ✦</div>
 
@@ -284,7 +415,7 @@
     <div class="qr-label-bottom">badlegion.github.io/elisabeths-gave</div>
   </div>
 
-  <!-- Password box -->
+  <!-- Password box — prominent, will definitely print clearly -->
   <div class="pw-box">
     <div class="pw-label">Kodeord til siden</div>
     <div class="pw-value">tillykke</div>
@@ -294,12 +425,13 @@
 
   <!-- Signature -->
   <div class="signature">
-    Med kærlighed <span class="sig-heart">♥</span><br>
+    Med kærlighed ♥<br>
     <span class="sig-names">Fie &amp; Simon</span>
   </div>
+
 </div>
 
-<div class="print-hint">🖨️ Ctrl+P → Gem som PDF</div>
+<div class="print-hint" onclick="window.print()">🖨️ Klik her for at printe (Ctrl+P)</div>
 
 <script>
   new QRCode(document.getElementById('qr-code'), {
