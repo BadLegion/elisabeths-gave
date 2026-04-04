@@ -1496,12 +1496,12 @@ function closeEnvelope() {
 }
 
 // ── VIDEO MODAL ──
-const YOUTUBE_ID = ''; // ← Indsæt YouTube video-ID her når klar
+const LOOM_ID = '3a015ea5-8357-4bf6-8d99-61bef4dc6f19';
 function openVideoModal() {
   const modal = document.getElementById('video-modal');
   const inner = document.getElementById('video-modal-inner');
-  if (YOUTUBE_ID) {
-    inner.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0&modestbranding=1"
+  if (LOOM_ID) {
+    inner.innerHTML = `<iframe src="https://www.loom.com/embed/${LOOM_ID}?autoplay=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true"
       allowfullscreen allow="autoplay; encrypted-media"
       style="position:absolute;inset:0;width:100%;height:100%;border:none;border-radius:14px;"></iframe>`;
   }
@@ -1514,7 +1514,7 @@ function closeVideoModal(e) {
   const inner = document.getElementById('video-modal-inner');
   modal.style.display = 'none';
   document.body.style.overflow = '';
-  if (YOUTUBE_ID) inner.innerHTML = '';
+  if (LOOM_ID) inner.innerHTML = '';
   // Close envelope again after modal closes
   closeEnvelope();
 }
